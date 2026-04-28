@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://mlyl53c5bl0j"]
+
+[ext_resource type="Script" uid="uid://bo8e45sajud2i" path="res://scripts/WorldLayer.gd" id="1_1uira"]
+
+[node name="WorldLayer" type="Node2D"]
+script = ExtResource("1_1uira")
+
+[node name="Content" type="Node2D" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="Content"]
+offset_right = 1280.0
+offset_bottom = 720.0
+
+[node name="Outline" type="Node2D" parent="."]

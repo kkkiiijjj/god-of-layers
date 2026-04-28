@@ -1,0 +1,9 @@
+# Godot 缓存和临时文件
+.godot/
+*.uid
+
+# 导出文件
+export/
+*.exe
+*.apk
+*.zip

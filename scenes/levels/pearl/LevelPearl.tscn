@@ -1,0 +1,79 @@
+[gd_scene load_steps=4 format=3 uid="uid://cp1bu1dk62455"]
+
+[ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
+[ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
+[ext_resource type="Script" uid="uid://icsx7l8h37af" path="res://scripts/LayerPanel.gd" id="3_xitwa"]
+
+[node name="LevelPearl" type="Node2D"]
+script = ExtResource("1_vx3aj")
+
+[node name="Layers" type="Node2D" parent="."]
+
+[node name="sky" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "sky"
+layer_name = "天空"
+placeholder_color = Color(0.529412, 0.807843, 0.921569, 1)
+
+[node name="sea_far" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "sea_far"
+layer_name = "远海"
+placeholder_color = Color(0.117647, 0.564706, 1, 1)
+
+[node name="beach" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "beach"
+layer_name = "沙滩"
+placeholder_color = Color(0.956863, 0.643137, 0.376471, 1)
+
+[node name="wave" parent="Layers" instance=ExtResource("2_ow1dc")]
+modulate = Color(1, 1, 1, 0.8)
+layer_id = "wave"
+layer_name = "海浪"
+placeholder_color = Color(0, 0.807843, 0.819608, 1)
+
+[node name="underwater" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "underwater"
+layer_name = "海底世界"
+placeholder_color = Color(0, 0, 0.545098, 1)
+
+[node name="tavern" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "tavern"
+layer_name = "小酒馆"
+placeholder_color = Color(0.545098, 0.270588, 0.0745098, 1)
+
+[node name="monster" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "monster"
+layer_name = "小怪物"
+placeholder_color = Color(1, 0.411765, 0.705882, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LayerPanel" type="PanelContainer" parent="UI/HUD"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 1040.0
+offset_top = 104.0
+offset_right = 1240.0
+offset_bottom = 604.0
+grow_horizontal = 0
+grow_vertical = 2
+script = ExtResource("3_xitwa")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/LayerPanel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/HUD/LayerPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "layers"
