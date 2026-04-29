@@ -40,10 +40,24 @@ layer_id = "tavern"
 layer_name = "小酒馆"
 placeholder_color = Color(0.545098, 0.270588, 0.0745098, 1)
 
-[node name="monster" parent="Layers" instance=ExtResource("2_ow1dc")]
-layer_id = "monster"
-layer_name = "小怪物"
-placeholder_color = Color(1, 0.411765, 0.705882, 1)
+[node name="monster_red" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "monster_red"
+layer_name = "红色怪物"
+placeholder_color = Color(1, 0, 0, 1)
+
+[node name="monster_white" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "monster_white"
+layer_name = "白色怪物"
+
+[node name="monster_green" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "monster_green"
+layer_name = "绿色怪物"
+placeholder_color = Color(0, 1, 0, 1)
+
+[node name="monster_blue" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "monster_blue"
+layer_name = "蓝色怪物"
+placeholder_color = Color(0, 0, 1, 1)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 

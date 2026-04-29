@@ -16,6 +16,7 @@ func _ready() -> void:
 	_build_panel()
 	_create_drop_indicator()
 	EventBus.layer_reordered.connect(_rebuild_panel)
+	EventBus.layer_visibility_changed.connect(_on_visibility_changed)
 
 
 func _create_drop_indicator() -> void:
@@ -43,7 +44,9 @@ func _build_panel() -> void:
 	for layer in layers_reversed:
 		var layer_id = layer.get_meta("layer_id", "")
 		var row = _create_layer_row(layer, layer_id)
-		vbox.add_child(row)
+		vbox.add_child(row) 
+		# 同步隐藏状态
+		row.visible = layer.visible
 
 
 func _build_opacity_row(vbox: VBoxContainer) -> void:
@@ -271,3 +274,7 @@ func _rebuild_panel() -> void:
 	_build_panel()
 	if drop_indicator == null:
 		_create_drop_indicator()
+		
+func _on_visibility_changed(layer_id: String, visible: bool) -> void:
+	if layer_buttons.has(layer_id):
+		layer_buttons[layer_id].visible = visible
