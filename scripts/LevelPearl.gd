@@ -82,6 +82,8 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 	match stage:
 		1:
 			print(">>> 进入阶段二：发现小怪物")
+			# 怪物图层在面板里显示出来，但画面仍然隐藏
+			_reveal_monsters_in_panel()
 		2:
 			print(">>> 进入阶段三：收集颜料")
 		3:
@@ -90,8 +92,19 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 			print(">>> 进入阶段五：解锁酒馆")
 		5:
 			_on_level_complete()
+			
 
 
 func _on_level_complete() -> void:
 	GameState.complete_level()
 	print("=== 关卡完成！===")
+	
+func _reveal_monsters_in_panel() -> void:
+	print("执行 _reveal_monsters_in_panel")
+	var panel = $UI/HUD/LayerPanel
+	if not panel:
+		print("找不到 LayerPanel！")
+		return
+	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
+		print("显示面板行：", monster_id)
+		panel.show_layer_in_panel(monster_id)

@@ -9,6 +9,7 @@ var insert_index: int = -1
 var selected_id: String = ""
 var opacity_slider: HSlider = null
 var opacity_label: Label = null
+var panel_visible_ids: Array[String] = []
 
 
 func _ready() -> void:
@@ -17,6 +18,8 @@ func _ready() -> void:
 	_create_drop_indicator()
 	EventBus.layer_reordered.connect(_rebuild_panel)
 	EventBus.layer_visibility_changed.connect(_on_visibility_changed)
+	EventBus.puzzle_stage_changed.connect(_on_stage_changed)
+	_update_eye_buttons_state()
 
 
 func _create_drop_indicator() -> void:
@@ -35,7 +38,6 @@ func _build_panel() -> void:
 			child.queue_free()
 	layer_buttons.clear()
 
-	# 透明度区域插在 Title 后面
 	_build_opacity_row(vbox)
 
 	var layers_reversed = LayerManager.layers.duplicate()
@@ -44,22 +46,19 @@ func _build_panel() -> void:
 	for layer in layers_reversed:
 		var layer_id = layer.get_meta("layer_id", "")
 		var row = _create_layer_row(layer, layer_id)
-		vbox.add_child(row) 
-		# 同步隐藏状态
-		row.visible = layer.visible
+		vbox.add_child(row)
+		# 初始只显示非隐藏图层，或已经被解锁显示的图层
+		row.visible = layer.visible or layer_id in panel_visible_ids
 
 
 func _build_opacity_row(vbox: VBoxContainer) -> void:
-	# 如果已经存在就跳过
 	if vbox.has_node("OpacityRow"):
 		return
 
-	# 透明度行容器
 	var opacity_row = VBoxContainer.new()
 	opacity_row.name = "OpacityRow"
 	opacity_row.custom_minimum_size = Vector2(180, 56)
 
-	# 上方：标签 + 数值
 	var top_row = HBoxContainer.new()
 	var opacity_title = Label.new()
 	opacity_title.text = "不透明度"
@@ -73,7 +72,6 @@ func _build_opacity_row(vbox: VBoxContainer) -> void:
 	top_row.add_child(opacity_title)
 	top_row.add_child(opacity_label)
 
-	# 滑条
 	opacity_slider = HSlider.new()
 	opacity_slider.min_value = 0.0
 	opacity_slider.max_value = 1.0
@@ -85,7 +83,6 @@ func _build_opacity_row(vbox: VBoxContainer) -> void:
 	opacity_row.add_child(top_row)
 	opacity_row.add_child(opacity_slider)
 
-	# 分隔线
 	var sep = HSeparator.new()
 	sep.name = "Separator"
 
@@ -101,17 +98,14 @@ func _on_opacity_changed(value: float) -> void:
 
 
 func _select_layer(layer_id: String) -> void:
-	# 取消上一个选中的高亮
 	if selected_id != "" and layer_buttons.has(selected_id):
 		layer_buttons[selected_id].modulate = Color.WHITE
 
 	selected_id = layer_id
 
-	# 高亮新选中行
 	if layer_buttons.has(selected_id):
 		layer_buttons[selected_id].modulate = Color(0.5, 0.8, 1.0)
 
-	# 同步滑条到当前图层的透明度
 	var layer = _find_layer_by_id(layer_id)
 	if layer and opacity_slider:
 		var current_opacity = layer.modulate.a
@@ -142,12 +136,15 @@ func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 	eye_btn.button_pressed = true
 	eye_btn.custom_minimum_size = Vector2(32, 0)
 	eye_btn.toggled.connect(func(pressed: bool):
+		if GameState.current_stage == 0:
+			eye_btn.set_pressed_no_signal(true)
+			return
 		LayerManager.set_visible(layer_id, pressed)
 		eye_btn.text = "👁" if pressed else "🙈"
 		eye_btn.modulate = Color.WHITE if pressed else Color(1, 1, 1, 0.4)
 	)
 
-	# 图层名称，点击选中
+	# 图层名称
 	var label = Button.new()
 	label.text = layer_id
 	label.flat = true
@@ -263,6 +260,31 @@ func _end_drag() -> void:
 	insert_index = -1
 
 
+func _on_visibility_changed(layer_id: String, visible: bool) -> void:
+	if layer_buttons.has(layer_id):
+		# 只有阶段一才跟着隐藏面板行
+		if GameState.current_stage == 0:
+			layer_buttons[layer_id].visible = visible
+
+
+func _on_stage_changed(_stage: int) -> void:
+	_update_eye_buttons_state()
+
+
+func _update_eye_buttons_state() -> void:
+	var is_stage_one = GameState.current_stage == 0
+	for layer_id in layer_buttons:
+		var row = layer_buttons[layer_id]
+		var eye_btn = row.get_child(1)
+		if eye_btn:
+			if is_stage_one:
+				eye_btn.modulate = Color(1, 1, 1, 0.3)
+				eye_btn.mouse_default_cursor_shape = Control.CURSOR_ARROW
+			else:
+				eye_btn.modulate = Color.WHITE
+				eye_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+
+
 func _find_layer_by_id(layer_id: String) -> Node:
 	for layer in LayerManager.layers:
 		if layer.get_meta("layer_id", "") == layer_id:
@@ -274,7 +296,10 @@ func _rebuild_panel() -> void:
 	_build_panel()
 	if drop_indicator == null:
 		_create_drop_indicator()
-		
-func _on_visibility_changed(layer_id: String, visible: bool) -> void:
+	_update_eye_buttons_state()
+
+func show_layer_in_panel(layer_id: String) -> void:
+	if layer_id not in panel_visible_ids:
+		panel_visible_ids.append(layer_id)
 	if layer_buttons.has(layer_id):
-		layer_buttons[layer_id].visible = visible
+		layer_buttons[layer_id].visible = true
