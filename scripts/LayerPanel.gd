@@ -10,6 +10,8 @@ var selected_id: String = ""
 var opacity_slider: HSlider = null
 var opacity_label: Label = null
 var panel_visible_ids: Array[String] = []
+var collapsed: bool = false
+var collapse_btn: Button = null
 
 
 func _ready() -> void:
@@ -20,6 +22,24 @@ func _ready() -> void:
 	EventBus.layer_visibility_changed.connect(_on_visibility_changed)
 	EventBus.puzzle_stage_changed.connect(_on_stage_changed)
 	_update_eye_buttons_state()
+	collapse_btn = get_parent().get_node("CollapseBtn")
+	collapse_btn.pressed.connect(_toggle_collapse)
+	_update_collapse_btn_position()
+
+
+func _toggle_collapse() -> void:
+	collapsed = !collapsed
+	visible = collapsed == false
+	collapse_btn.text = "‹" if collapsed else "›"
+	_update_collapse_btn_position()
+
+
+func _update_collapse_btn_position() -> void:
+	if collapse_btn:
+		if collapsed:
+			collapse_btn.position = Vector2(get_viewport_rect().size.x - 24, get_viewport_rect().size.y / 2 - 30)
+		else:
+			collapse_btn.position = Vector2(get_viewport_rect().size.x - size.x - 24, get_viewport_rect().size.y / 2 - 30)
 
 
 func _create_drop_indicator() -> void:
@@ -28,11 +48,11 @@ func _create_drop_indicator() -> void:
 	drop_indicator.custom_minimum_size = Vector2(180, 3)
 	drop_indicator.visible = false
 	drop_indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	$VBoxContainer.add_child(drop_indicator)
+	$ScrollContainer/VBoxContainer.add_child(drop_indicator)
 
 
 func _build_panel() -> void:
-	var vbox = $VBoxContainer
+	var vbox = $ScrollContainer/VBoxContainer
 	for child in vbox.get_children():
 		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator":
 			child.queue_free()
@@ -183,7 +203,7 @@ func _process(_delta: float) -> void:
 
 
 func _update_drop_indicator() -> void:
-	var vbox = $VBoxContainer
+	var vbox = $ScrollContainer/VBoxContainer
 	var mouse_pos = vbox.get_local_mouse_position()
 	var rows = []
 	for child in vbox.get_children():
@@ -235,7 +255,7 @@ func _end_drag() -> void:
 	is_dragging = false
 	drop_indicator.visible = false
 
-	var vbox = $VBoxContainer
+	var vbox = $ScrollContainer/VBoxContainer
 	var rows = []
 	for child in vbox.get_children():
 		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator":
