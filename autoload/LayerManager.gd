@@ -103,7 +103,11 @@ func _find_layer(layer_id: String) -> Node:
 	return null
 
 
-# 根据 layers 数组顺序刷新每个图层的 z_index
 func _refresh_z_index() -> void:
 	for i in layers.size():
 		layers[i].z_index = i
+		layers[i].z_as_relative = false
+		# 同步场景树顺序
+		var parent = layers[i].get_parent()
+		if parent:
+			parent.move_child(layers[i], i)

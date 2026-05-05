@@ -1,8 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://cp1bu1dk62455"]
+[gd_scene load_steps=14 format=3 uid="uid://cp1bu1dk62455"]
 
 [ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
 [ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
+[ext_resource type="Texture2D" uid="uid://bo47vj2ho1xpq" path="res://assets/sprites/sky.png" id="3_n6kh4"]
 [ext_resource type="Script" uid="uid://icsx7l8h37af" path="res://scripts/LayerPanel.gd" id="3_xitwa"]
+[ext_resource type="Texture2D" uid="uid://djno1q8xv06mm" path="res://assets/sprites/sea_back.png" id="4_3ks7r"]
+[ext_resource type="Texture2D" uid="uid://bu7rq1dyslmx3" path="res://assets/sprites/beach.png" id="5_5seri"]
+[ext_resource type="Texture2D" uid="uid://c3qjepjhglyyh" path="res://assets/sprites/sun.png" id="6_lu0gh"]
+[ext_resource type="Texture2D" uid="uid://cn7k67y1t3woc" path="res://assets/sprites/sunset.png" id="7_syk0w"]
+[ext_resource type="Texture2D" uid="uid://o1aiybi3mfm1" path="res://assets/sprites/sea_front.png" id="8_mkle6"]
+[ext_resource type="Texture2D" uid="uid://c22x4mfv5d75l" path="res://assets/sprites/seagull.png" id="9_h3i0y"]
+[ext_resource type="Texture2D" uid="uid://c4jkkmt38me8a" path="res://assets/sprites/rock.png" id="10_d6rmn"]
+[ext_resource type="Texture2D" uid="uid://c5wynoh2uedt" path="res://assets/sprites/coconut_tree.png" id="11_4gwpv"]
+[ext_resource type="Texture2D" uid="uid://djs0orsii7w0c" path="res://assets/sprites/icecream.png" id="12_4utb3"]
 
 [node name="LevelPearl" type="Node2D"]
 script = ExtResource("1_vx3aj")
@@ -12,28 +22,58 @@ script = ExtResource("1_vx3aj")
 [node name="sky" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "sky"
 layer_name = "天空"
-placeholder_color = Color(0.529412, 0.807843, 0.921569, 1)
+texture = ExtResource("3_n6kh4")
 
-[node name="sea_far" parent="Layers" instance=ExtResource("2_ow1dc")]
-layer_id = "sea_far"
-layer_name = "远海"
+[node name="sun" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "sun"
+layer_name = "太阳"
+texture = ExtResource("6_lu0gh")
+
+[node name="sunset" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "sunset"
+layer_name = "晚霞"
+texture = ExtResource("7_syk0w")
+
+[node name="sea_back" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "sea_back"
+layer_name = "大海后三层"
 placeholder_color = Color(0.117647, 0.564706, 1, 1)
+texture = ExtResource("4_3ks7r")
 
 [node name="beach" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "beach"
 layer_name = "沙滩"
 placeholder_color = Color(0.956863, 0.643137, 0.376471, 1)
+texture = ExtResource("5_5seri")
 
-[node name="wave" parent="Layers" instance=ExtResource("2_ow1dc")]
-modulate = Color(1, 1, 1, 0.8)
-layer_id = "wave"
-layer_name = "海浪"
-placeholder_color = Color(0, 0.807843, 0.819608, 1)
+[node name="sea_front" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "sea_front"
+layer_name = "大海前三层"
+texture = ExtResource("8_mkle6")
 
-[node name="underwater" parent="Layers" instance=ExtResource("2_ow1dc")]
-layer_id = "underwater"
-layer_name = "海底世界"
-placeholder_color = Color(0, 0, 0.545098, 1)
+[node name="seagull" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "seagull"
+layer_name = "海鸥"
+texture = ExtResource("9_h3i0y")
+
+[node name="rock" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "rock"
+layer_name = "礁石"
+texture = ExtResource("10_d6rmn")
+
+[node name="coconut_tree" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "coconut_tree"
+layer_name = "椰子树"
+texture = ExtResource("11_4gwpv")
+
+[node name="family" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "family"
+layer_name = "一家人"
+
+[node name="icecream" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "icecream"
+layer_name = "冰淇淋摊"
+texture = ExtResource("12_4utb3")
 
 [node name="tavern" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "tavern"

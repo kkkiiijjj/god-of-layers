@@ -4,16 +4,19 @@ extends Node2D
 @export var layer_name: String = ""
 @export var draggable: bool = true
 @export var placeholder_color: Color = Color.WHITE
+@export var texture: Texture2D:
+	set(value):
+		texture = value
+		if is_node_ready():
+			$Content/Sprite2D.texture = value
 
 
 func _ready() -> void:
 	set_meta("layer_id", layer_id)
-	LayerManager.register_layer(self)
-	
-	# 设置占位色块颜色
-	var rect = $Content/ColorRect
-	if rect:
-		rect.color = placeholder_color
+	# 不在这里注册，由 LevelPearl 统一管理
+	z_as_relative = false
+	if texture:
+		$Content/Sprite2D.texture = texture
 
 
 func _exit_tree() -> void:
