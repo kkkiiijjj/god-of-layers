@@ -4,6 +4,7 @@ extends Node2D
 @export var layer_name: String = ""
 @export var draggable: bool = true
 @export var placeholder_color: Color = Color.WHITE
+@export var sprite_position: Vector2 = Vector2(640, 360)
 @export var texture: Texture2D:
 	set(value):
 		texture = value
@@ -17,6 +18,7 @@ func _ready() -> void:
 	z_as_relative = false
 	if texture:
 		$Content/Sprite2D.texture = texture
+	$Content/Sprite2D.position = sprite_position
 
 
 func _exit_tree() -> void:

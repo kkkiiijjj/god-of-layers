@@ -1,7 +1,5 @@
 extends Node2D
 
-# 正确的图层顺序，从下到上
-# 每条规则：[下层id, 上层id]，表示前者必须在后者下面
 const ORDER_RULES = [
 	["sky", "sun"],
 	["sky", "sunset"],
@@ -19,26 +17,31 @@ const ORDER_RULES = [
 	["rock", "coconut_tree"],
 ]
 
+@onready var dialogue_box = $UI/HUD/DialogueBox
+
+
+
 func _ready() -> void:
 	GameState.start_level("pearl")
 	_setup_camera()
 	_connect_signals()
 	
-	# 先按场景树顺序初始化
 	LayerManager.layers.clear()
 	for child in $Layers.get_children():
 		if child.has_meta("layer_id"):
 			LayerManager.layers.append(child)
 	LayerManager._refresh_z_index()
 	
-	# 再打乱
 	_shuffle_layers()
 	
 	await get_tree().process_frame
 	print("=== 已注册图层数量：", LayerManager.get_layer_count(), " ===")
 	for i in LayerManager.layers.size():
 		var l = LayerManager.layers[i]
-		print("  [", i, "] ", l.get_meta("layer_id", "无ID"), " z_index=", l.z_index)
+		print("  [", i, "] ", l.get_meta("layer_id", "无ID"))
+	
+	_trigger_stage_one_start()
+
 
 func _setup_camera() -> void:
 	$Camera2D.position = Vector2(640, 360)
@@ -50,7 +53,6 @@ func _connect_signals() -> void:
 
 
 func _shuffle_layers() -> void:
-	# 固定打乱顺序，index 0 = 最底层
 	var shuffled_ids = [
 		"sunset",
 		"beach",
@@ -63,13 +65,10 @@ func _shuffle_layers() -> void:
 		"rock",
 		"sea_front",
 	]
-	
 	for i in shuffled_ids.size():
 		var layer = _find_layer(shuffled_ids[i])
 		if layer:
 			LayerManager.reorder_layer(layer, i)
-
-	# 怪物和酒馆初始隐藏
 	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
 		LayerManager.set_visible(monster_id, false)
 	LayerManager.set_visible("tavern", false)
@@ -110,12 +109,56 @@ func _find_layer(layer_id: String) -> Node:
 	return null
 
 
+func _trigger_stage_one_start() -> void:
+	dialogue_box.show_dialogue([
+		"欢迎。检测到图层顺序异常，请将它们恢复至正确位置。这是基础操作，应该难不倒你的。"
+	])
+
+
+func _trigger_stage_two_intro() -> void:
+	dialogue_box.show_dialogue([
+		"很好，顺序已恢复——",
+		"……等一下。",
+		"画面存在异常缺口。这、这不在我的工作手册里。",
+		"好，冷静。你先用隐藏图层功能调查一下那些缺口，方法是点击图层旁边的眼睛图标。",
+		"我去上报这个情况，很快回来。应该很快。大概。",
+	], _start_guide_timer)
+
+
+func _start_guide_timer() -> void:
+	var timer = get_tree().create_timer(300.0)
+	timer.timeout.connect(_guide_returns)
+
+
+func _guide_returns() -> void:
+	var bugs_cleared = true
+	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
+		var layer = _find_layer(monster_id)
+		if layer and layer.visible:
+			bugs_cleared = false
+			break
+	
+	if bugs_cleared:
+		dialogue_box.show_dialogue([
+			"我回来了——咦？",
+			"缺口里的东西……消失了？",
+			"你做的？",
+			"这不在我的预期流程里。我需要记录一下。",
+			"……总之，做得不错。下面我们来修补这些缺口。",
+		])
+	else:
+		dialogue_box.show_dialogue([
+			"我回来了。上面说这种情况他们也没见过，让我自己处理……",
+			"没关系，交给我。",
+			"好，处理完毕。下面我来教你修补这些缺口。",
+		])
+
+
 func _on_puzzle_stage_changed(stage: int) -> void:
 	match stage:
 		1:
-			print(">>> 进入阶段二：发现小怪物")
-			# 怪物图层在面板里显示出来，但画面仍然隐藏
 			_reveal_monsters_in_panel()
+			_trigger_stage_two_intro()
 		2:
 			print(">>> 进入阶段三：收集颜料")
 		3:
@@ -124,19 +167,23 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 			print(">>> 进入阶段五：解锁酒馆")
 		5:
 			_on_level_complete()
-			
 
 
 func _on_level_complete() -> void:
 	GameState.complete_level()
 	print("=== 关卡完成！===")
-	
+
+
 func _reveal_monsters_in_panel() -> void:
-	print("执行 _reveal_monsters_in_panel")
 	var panel = $UI/HUD/LayerPanel
 	if not panel:
-		print("找不到 LayerPanel！")
 		return
 	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
-		print("显示面板行：", monster_id)
 		panel.show_layer_in_panel(monster_id)
+
+
+func _show_holes() -> void:
+	$UI/HoleLayer/HoleRed.visible = true
+	$UI/HoleLayer/HoleBlue.visible = true
+	$UI/HoleLayer/HoleGreen.visible = true
+	$UI/HoleLayer/HoleWhite.visible = true
