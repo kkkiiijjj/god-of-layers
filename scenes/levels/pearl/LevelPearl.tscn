@@ -92,7 +92,7 @@ position = Vector2(300, 400)
 layer_id = "monster_red"
 layer_name = "红色怪物"
 placeholder_color = Color(1, 0, 0, 1)
-sprite_position = Vector2(600, 230)
+sprite_position = Vector2(620, 360)
 texture = ExtResource("13_5seri")
 
 [node name="monster_white" parent="Layers" instance=ExtResource("2_ow1dc")]

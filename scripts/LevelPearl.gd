@@ -161,8 +161,8 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 		1:
 			_show_holes()
 			_reveal_sea_layers()
+			_position_monsters()
 			_reveal_monsters_in_panel()
-			# 显示新海洋图层到面板
 			var panel = $UI/HUD/LayerPanel
 			for sea_id in ["sea_bg4", "sea_layer5", "lanternfish", "sea_layer6"]:
 				panel.show_layer_in_panel(sea_id)
@@ -213,3 +213,20 @@ func _reveal_sea_layers() -> void:
 		if layer:
 			LayerManager.set_visible(new_layers[i], true)
 			LayerManager.reorder_layer(layer, sea_back_index + i)
+			
+func _position_monsters() -> void:
+	var placements = {
+		"monster_red": "sun",
+		"monster_green": "coconut_tree",
+		"monster_blue": "sea_layer5",
+		"monster_white": "sea_front",
+	}
+	for monster_id in placements:
+		var target_id = placements[monster_id]
+		var target_index = _get_layer_index(target_id)
+		var monster = _find_layer(monster_id)
+		if monster and target_index != -1:
+			LayerManager.reorder_layer(monster, target_index)
+			# 强制刷新 CanvasLayer 显示状态
+			monster.visible = false
+			monster.visible = true
