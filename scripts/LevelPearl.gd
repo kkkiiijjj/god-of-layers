@@ -18,7 +18,7 @@ const ORDER_RULES = [
 ]
 
 @onready var dialogue_box = $UI/HUD/DialogueBox
-
+@onready var layer_panel = $UI/HUD/LayerPanel
 
 
 func _ready() -> void:
@@ -41,6 +41,13 @@ func _ready() -> void:
 		print("  [", i, "] ", l.get_meta("layer_id", "无ID"))
 	
 	_trigger_stage_one_start()
+
+
+func _process(_delta: float) -> void:
+	if not layer_panel.eraser_mode:
+		return
+	if Input.is_action_just_pressed("mouse_left"):
+		_on_eraser_activated()
 
 
 func _setup_camera() -> void:
@@ -143,18 +150,57 @@ func _guide_returns() -> void:
 	
 	if bugs_cleared:
 		dialogue_box.show_dialogue([
-			"我回来了——咦？",
-			"缺口里的东西……消失了？",
-			"你做的？",
-			"这不在我的预期流程里。我需要记录一下。",
-			"……总之，做得不错。下面我们来修补这些缺口。",
+			"哦？",
+			"您已经找到橡皮擦了。",
+			"……这届比上一届聪明。那个本来是之后的教学内容的。",
+			"看来我得把它藏得更隐蔽一些。记录在案。",
+			"不过，它们留下的这些缺口……我的数据库里没有任何相关记录。",
+			"这种损伤从未出现过。也许只有您能处理——毕竟，您来自我们创造者的族群。",
 		])
 	else:
 		dialogue_box.show_dialogue([
 			"我回来了。上面说这种情况他们也没见过，让我自己处理……",
 			"没关系，交给我。",
 			"好，处理完毕。下面我来教你修补这些缺口。",
-		])
+		], _after_bugs_cleared)
+
+
+func _on_eraser_activated() -> void:
+	var cover_layers = ["sun", "coconut_tree", "sea_layer5", "sea_front"]
+	for lid in cover_layers:
+		var layer = _find_layer(lid)
+		if layer and layer.visible:
+			return
+	_clear_all_bugs()
+
+
+func _clear_all_bugs() -> void:
+	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
+		LayerManager.set_visible(monster_id, false)
+		if layer_panel.layer_buttons.has(monster_id):
+			layer_panel.layer_buttons[monster_id].visible = false
+	# 关闭橡皮擦模式
+	layer_panel.eraser_mode = false
+	layer_panel.eraser_btn.modulate = Color.WHITE
+	_check_all_bugs_cleared()
+
+
+func _check_all_bugs_cleared() -> void:
+	dialogue_box.show_dialogue([
+		"哦？",
+		"您已经找到橡皮擦了。",
+		"……这届比上一届聪明。那个本来是之后的教学内容的。",
+		"看来我得把它藏得更隐蔽一些。记录在案。",
+		"不过，它们留下的这些缺口……我的数据库里没有任何相关记录。",
+		"这种损伤从未出现过。也许只有您能处理——毕竟，您来自我们创造者的族群。",
+	])
+
+
+func _after_bugs_cleared() -> void:
+	dialogue_box.show_dialogue([
+		"不过，它们留下的这些缺口……我的数据库里没有任何相关记录。",
+		"这种损伤从未出现过。也许只有您能处理——毕竟，您来自我们创造者的族群。",
+	])
 
 
 func _on_puzzle_stage_changed(stage: int) -> void:
@@ -164,12 +210,11 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 			_reveal_sea_layers()
 			_position_monsters()
 			_reveal_monsters_in_panel()
-			var panel = $UI/HUD/LayerPanel
 			for sea_id in ["sea_bg4", "sea_layer5", "lanternfish", "sea_layer6"]:
-				panel.show_layer_in_panel(sea_id)
+				layer_panel.show_layer_in_panel(sea_id)
 			_trigger_stage_two_intro()
 			LayerManager.set_visible("?", true)
-			panel.show_layer_in_panel("?")
+			layer_panel.show_layer_in_panel("?")
 		2:
 			print(">>> 进入阶段三：收集颜料")
 		3:
@@ -186,18 +231,12 @@ func _on_level_complete() -> void:
 
 
 func _reveal_monsters_in_panel() -> void:
-	var panel = $UI/HUD/LayerPanel
-	if not panel:
-		return
 	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
-		panel.show_layer_in_panel(monster_id)
-		
-
+		layer_panel.show_layer_in_panel(monster_id)
 
 
 func _show_holes() -> void:
 	var hole_layer = $UI/HoleLayer
-	print("HoleLayer: ", hole_layer)
 	if not hole_layer:
 		print("找不到 HoleLayer！")
 		return
@@ -206,17 +245,18 @@ func _show_holes() -> void:
 	$UI/HoleLayer/HoleGreen.visible = true
 	$UI/HoleLayer/HoleWhite.visible = true
 
+
 func _reveal_sea_layers() -> void:
 	var sea_back_index = _get_layer_index("sea_back")
 	LayerManager.set_visible("sea_back", false)
-	
 	var new_layers = ["sea_layer6", "sea_layer5", "sea_bg4", "lanternfish"]
 	for i in new_layers.size():
 		var layer = _find_layer(new_layers[i])
 		if layer:
 			LayerManager.set_visible(new_layers[i], true)
 			LayerManager.reorder_layer(layer, sea_back_index + i)
-			
+
+
 func _position_monsters() -> void:
 	var placements = {
 		"monster_red": "sun",
@@ -230,6 +270,5 @@ func _position_monsters() -> void:
 		var monster = _find_layer(monster_id)
 		if monster and target_index != -1:
 			LayerManager.reorder_layer(monster, target_index)
-			# 强制刷新 CanvasLayer 显示状态
 			monster.visible = false
 			monster.visible = true
