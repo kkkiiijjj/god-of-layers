@@ -88,7 +88,6 @@ layer_name = "小酒馆"
 placeholder_color = Color(0.545098, 0.270588, 0.0745098, 1)
 
 [node name="monster_red" parent="Layers" instance=ExtResource("2_ow1dc")]
-position = Vector2(300, 400)
 layer_id = "monster_red"
 layer_name = "红色怪物"
 placeholder_color = Color(1, 0, 0, 1)
@@ -130,6 +129,9 @@ texture = ExtResource("16_4utb3")
 [node name="sea_layer6" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "sea_layer6"
 texture = ExtResource("17_vpsu2")
+
+[node name="?" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "?"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
@@ -199,6 +201,22 @@ layout_mode = 2
 
 [node name="ContinueBtn" type="Button" parent="UI/HUD/DialogueBox/MarginContainer/VBoxContainer"]
 layout_mode = 2
+
+[node name="EraserBtn" type="Button" parent="UI/HUD"]
+layout_mode = 2
+offset_left = 1080.0
+offset_top = 156.0
+offset_right = 1112.0
+offset_bottom = 188.0
+text = "🧹"
+
+[node name="EraserBlock" type="ColorRect" parent="UI/HUD"]
+layout_mode = 2
+offset_left = 1080.0
+offset_top = 156.0
+offset_right = 1112.0
+offset_bottom = 188.0
+color = Color(0.423529, 0.313726, 0.109804, 1)
 
 [node name="HoleLayer" type="CanvasLayer" parent="UI"]
 layer = 100

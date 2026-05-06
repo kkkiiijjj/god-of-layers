@@ -74,6 +74,7 @@ func _shuffle_layers() -> void:
 	LayerManager.set_visible("tavern", false)
 	for sea_id in ["sea_bg4", "lanternfish", "sea_layer5", "sea_layer6"]:
 		LayerManager.set_visible(sea_id, false)
+	LayerManager.set_visible("?", false)
 
 
 func _on_layer_reordered() -> void:
@@ -167,6 +168,8 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 			for sea_id in ["sea_bg4", "sea_layer5", "lanternfish", "sea_layer6"]:
 				panel.show_layer_in_panel(sea_id)
 			_trigger_stage_two_intro()
+			LayerManager.set_visible("?", true)
+			panel.show_layer_in_panel("?")
 		2:
 			print(">>> 进入阶段三：收集颜料")
 		3:

@@ -1,5 +1,6 @@
 extends PanelContainer
 
+var eraser_mode: bool = false
 var layer_buttons: Dictionary = {}
 var dragging_id: String = ""
 var drag_preview: Control = null
@@ -12,6 +13,8 @@ var opacity_label: Label = null
 var panel_visible_ids: Array[String] = []
 var collapsed: bool = false
 var collapse_btn: Button = null
+@onready var eraser_btn: Button = get_parent().get_node("EraserBtn")
+@onready var eraser_block: ColorRect = get_parent().get_node("EraserBlock")
 
 
 func _ready() -> void:
@@ -25,6 +28,15 @@ func _ready() -> void:
 	collapse_btn = get_parent().get_node("CollapseBtn")
 	collapse_btn.pressed.connect(_toggle_collapse)
 	_update_collapse_btn_position()
+	eraser_btn.visible = false
+	eraser_btn.pressed.connect(_toggle_eraser_mode)
+
+
+
+func _toggle_eraser_mode() -> void:
+	eraser_mode = !eraser_mode
+	if eraser_btn:
+		eraser_btn.modulate = Color(1, 0.5, 0.5) if eraser_mode else Color.WHITE
 
 
 func _toggle_collapse() -> void:
@@ -54,7 +66,7 @@ func _create_drop_indicator() -> void:
 func _build_panel() -> void:
 	var vbox = $ScrollContainer/VBoxContainer
 	for child in vbox.get_children():
-		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator":
+		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator" and child.name != "EraserBtn" and child.name != "EraserBlock":
 			child.queue_free()
 	layer_buttons.clear()
 
@@ -67,7 +79,6 @@ func _build_panel() -> void:
 		var layer_id = layer.get_meta("layer_id", "")
 		var row = _create_layer_row(layer, layer_id)
 		vbox.add_child(row)
-		# 初始只显示非隐藏图层，或已经被解锁显示的图层
 		row.visible = layer.visible or layer_id in panel_visible_ids
 
 
@@ -138,7 +149,6 @@ func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 	row.set_meta("layer_id", layer_id)
 	row.custom_minimum_size = Vector2(180, 40)
 
-	# 拖拽把手
 	var handle = Label.new()
 	handle.text = "⠿"
 	handle.custom_minimum_size = Vector2(24, 0)
@@ -149,7 +159,6 @@ func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 		_on_handle_input(event, layer_id)
 	)
 
-	# 眼睛按钮
 	var eye_btn = Button.new()
 	eye_btn.text = "👁"
 	eye_btn.toggle_mode = true
@@ -164,7 +173,6 @@ func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 		eye_btn.modulate = Color.WHITE if pressed else Color(1, 1, 1, 0.4)
 	)
 
-	# 图层名称
 	var label = Button.new()
 	label.text = layer_id
 	label.flat = true
@@ -207,7 +215,7 @@ func _update_drop_indicator() -> void:
 	var mouse_pos = vbox.get_local_mouse_position()
 	var rows = []
 	for child in vbox.get_children():
-		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator":
+		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator" and child.name != "EraserBtn" and child.name != "EraserBlock":
 			rows.append(child)
 
 	insert_index = rows.size()
@@ -258,7 +266,7 @@ func _end_drag() -> void:
 	var vbox = $ScrollContainer/VBoxContainer
 	var rows = []
 	for child in vbox.get_children():
-		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator":
+		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator" and child.name != "EraserBtn" and child.name != "EraserBlock":
 			rows.append(child)
 
 	var total = LayerManager.layers.size()
@@ -282,9 +290,14 @@ func _end_drag() -> void:
 
 func _on_visibility_changed(layer_id: String, visible: bool) -> void:
 	if layer_buttons.has(layer_id):
-		# 只有阶段一才跟着隐藏面板行
 		if GameState.current_stage == 0:
 			layer_buttons[layer_id].visible = visible
+
+	if layer_id == "?":
+		if eraser_block:
+			eraser_block.visible = visible
+		if eraser_btn:
+			eraser_btn.visible = !visible
 
 
 func _on_stage_changed(_stage: int) -> void:
@@ -317,6 +330,7 @@ func _rebuild_panel() -> void:
 	if drop_indicator == null:
 		_create_drop_indicator()
 	_update_eye_buttons_state()
+
 
 func show_layer_in_panel(layer_id: String) -> void:
 	if layer_id not in panel_visible_ids:
