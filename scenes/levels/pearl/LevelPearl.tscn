@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cp1bu1dk62455"]
+[gd_scene load_steps=21 format=3 uid="uid://cp1bu1dk62455"]
 
 [ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
 [ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
@@ -15,7 +15,11 @@
 [ext_resource type="Texture2D" uid="uid://djs0orsii7w0c" path="res://assets/sprites/icecream.png" id="12_4utb3"]
 [ext_resource type="Texture2D" uid="uid://bf435014wd52q" path="res://assets/sprites/bug.png" id="13_5seri"]
 [ext_resource type="Script" uid="uid://cokjna5k6i1sk" path="res://scripts/DialogueBox.gd" id="14_3ks7r"]
+[ext_resource type="Texture2D" uid="uid://pgv62ouxhuu5" path="res://assets/sprites/sea_bg4.png" id="14_d6rmn"]
+[ext_resource type="Texture2D" uid="uid://bmrhiiklc5wil" path="res://assets/sprites/lanternfish.png" id="15_4gwpv"]
+[ext_resource type="Texture2D" uid="uid://b7ivuf6pst8su" path="res://assets/sprites/sea_layer5.png" id="16_4utb3"]
 [ext_resource type="Texture2D" uid="uid://cvo4lf28ni0mo" path="res://assets/sprites/hole.png" id="16_lu0gh"]
+[ext_resource type="Texture2D" uid="uid://ggn24x32wrus" path="res://assets/sprites/sea_layer6.png" id="17_vpsu2"]
 
 [node name="LevelPearl" type="Node2D"]
 script = ExtResource("1_vx3aj")
@@ -88,26 +92,44 @@ position = Vector2(300, 400)
 layer_id = "monster_red"
 layer_name = "红色怪物"
 placeholder_color = Color(1, 0, 0, 1)
+sprite_position = Vector2(600, 230)
 texture = ExtResource("13_5seri")
 
 [node name="monster_white" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "monster_white"
 layer_name = "白色怪物"
-sprite_position = Vector2(200, 250)
+sprite_position = Vector2(660, 510)
 texture = ExtResource("13_5seri")
 
 [node name="monster_green" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "monster_green"
 layer_name = "绿色怪物"
 placeholder_color = Color(0, 1, 0, 1)
-sprite_position = Vector2(900, 200)
+sprite_position = Vector2(205, 240)
 texture = ExtResource("13_5seri")
 
 [node name="monster_blue" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "monster_blue"
 layer_name = "蓝色怪物"
 placeholder_color = Color(0, 0, 1, 1)
+sprite_position = Vector2(840, 340)
 texture = ExtResource("13_5seri")
+
+[node name="sea_bg4" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "sea_bg4"
+texture = ExtResource("14_d6rmn")
+
+[node name="lanternfish" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "lanternfish"
+texture = ExtResource("15_4gwpv")
+
+[node name="sea_layer5" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "sea_layer5"
+texture = ExtResource("16_4utb3")
+
+[node name="sea_layer6" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "sea_layer6"
+texture = ExtResource("17_vpsu2")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
@@ -183,16 +205,24 @@ layer = 100
 
 [node name="HoleRed" type="Sprite2D" parent="UI/HoleLayer"]
 visible = false
+position = Vector2(620, 230)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("16_lu0gh")
 
 [node name="HoleBlue" type="Sprite2D" parent="UI/HoleLayer"]
 visible = false
-texture = ExtResource("16_lu0gh")
-
-[node name="HoleGreen" type="Sprite2D" parent="UI/HoleLayer"]
-visible = false
+position = Vector2(860, 340)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("16_lu0gh")
 
 [node name="HoleWhite" type="Sprite2D" parent="UI/HoleLayer"]
 visible = false
+position = Vector2(680, 510)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("16_lu0gh")
+
+[node name="HoleGreen" type="Sprite2D" parent="UI/HoleLayer"]
+visible = false
+position = Vector2(225, 240)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("16_lu0gh")

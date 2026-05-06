@@ -72,6 +72,8 @@ func _shuffle_layers() -> void:
 	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
 		LayerManager.set_visible(monster_id, false)
 	LayerManager.set_visible("tavern", false)
+	for sea_id in ["sea_bg4", "lanternfish", "sea_layer5", "sea_layer6"]:
+		LayerManager.set_visible(sea_id, false)
 
 
 func _on_layer_reordered() -> void:
@@ -157,7 +159,13 @@ func _guide_returns() -> void:
 func _on_puzzle_stage_changed(stage: int) -> void:
 	match stage:
 		1:
+			_show_holes()
+			_reveal_sea_layers()
 			_reveal_monsters_in_panel()
+			# 显示新海洋图层到面板
+			var panel = $UI/HUD/LayerPanel
+			for sea_id in ["sea_bg4", "sea_layer5", "lanternfish", "sea_layer6"]:
+				panel.show_layer_in_panel(sea_id)
 			_trigger_stage_two_intro()
 		2:
 			print(">>> 进入阶段三：收集颜料")
@@ -180,10 +188,28 @@ func _reveal_monsters_in_panel() -> void:
 		return
 	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
 		panel.show_layer_in_panel(monster_id)
+		
+
 
 
 func _show_holes() -> void:
+	var hole_layer = $UI/HoleLayer
+	print("HoleLayer: ", hole_layer)
+	if not hole_layer:
+		print("找不到 HoleLayer！")
+		return
 	$UI/HoleLayer/HoleRed.visible = true
 	$UI/HoleLayer/HoleBlue.visible = true
 	$UI/HoleLayer/HoleGreen.visible = true
 	$UI/HoleLayer/HoleWhite.visible = true
+
+func _reveal_sea_layers() -> void:
+	var sea_back_index = _get_layer_index("sea_back")
+	LayerManager.set_visible("sea_back", false)
+	
+	var new_layers = ["sea_layer6", "sea_layer5", "sea_bg4", "lanternfish"]
+	for i in new_layers.size():
+		var layer = _find_layer(new_layers[i])
+		if layer:
+			LayerManager.set_visible(new_layers[i], true)
+			LayerManager.reorder_layer(layer, sea_back_index + i)
