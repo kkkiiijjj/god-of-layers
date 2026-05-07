@@ -57,6 +57,7 @@ func _setup_camera() -> void:
 func _connect_signals() -> void:
 	EventBus.puzzle_stage_changed.connect(_on_puzzle_stage_changed)
 	EventBus.layer_reordered.connect(_on_layer_reordered)
+	EventBus.layer_reordered.connect(_check_watermelon_puzzle)
 
 
 func _shuffle_layers() -> void:
@@ -82,6 +83,9 @@ func _shuffle_layers() -> void:
 	for sea_id in ["sea_bg4", "lanternfish", "sea_layer5", "sea_layer6"]:
 		LayerManager.set_visible(sea_id, false)
 	LayerManager.set_visible("?", false)
+	LayerManager.set_visible("stone", false)
+	LayerManager.set_visible("watermelon", false)
+	LayerManager.set_visible("watermelon_open", false)
 
 
 func _on_layer_reordered() -> void:
@@ -136,7 +140,7 @@ func _trigger_stage_two_intro() -> void:
 
 
 func _start_guide_timer() -> void:
-	var timer = get_tree().create_timer(300.0)
+	var timer = get_tree().create_timer(10.0)
 	timer.timeout.connect(_guide_returns)
 
 
@@ -156,13 +160,51 @@ func _guide_returns() -> void:
 			"看来我得把它藏得更隐蔽一些。记录在案。",
 			"不过，它们留下的这些缺口……我的数据库里没有任何相关记录。",
 			"这种损伤从未出现过。也许只有您能处理——毕竟，您来自我们创造者的族群。",
-		])
+		], _unlock_brush)
 	else:
 		dialogue_box.show_dialogue([
 			"我回来了。上面说这种情况他们也没见过，让我自己处理……",
 			"没关系，交给我。",
-			"好，处理完毕。下面我来教你修补这些缺口。",
-		], _after_bugs_cleared)
+		], _guide_clear_bugs)
+
+
+func _guide_clear_bugs() -> void:
+	# 引导清除所有 bug
+	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
+		LayerManager.set_visible(monster_id, false)
+		if layer_panel.layer_buttons.has(monster_id):
+			layer_panel.layer_buttons[monster_id].visible = false
+	dialogue_box.show_dialogue([
+		"处理完毕。",
+		"它们留下的这些缺口……我的数据库里没有任何相关记录。",
+		"这种损伤从未出现过。也许只有您能处理——毕竟，您来自我们创造者的族群。",
+	], _unlock_brush)
+
+
+func _check_all_bugs_cleared() -> void:
+	dialogue_box.show_dialogue([
+		"哦？",
+		"您已经找到橡皮擦了。",
+		"……这届比上一届聪明。那个本来是之后的教学内容的。",
+		"看来我得把它藏得更隐蔽一些。记录在案。",
+		"不过，它们留下的这些缺口……我的数据库里没有任何相关记录。",
+		"这种损伤从未出现过。也许只有您能处理——毕竟，您来自我们创造者的族群。",
+	], _unlock_brush)
+
+
+func _unlock_brush() -> void:
+	# 解锁画笔，教学白色漏洞
+	dialogue_box.show_dialogue([
+		"这支画笔交给您。",
+		"看到画面中的椰子了吗？画笔会自动吸取颜料并填补对应的漏洞。",
+	], _fill_white_hole)
+
+
+func _fill_white_hole() -> void:
+	# 自动填补白色漏洞
+	$UI/HoleLayer/HoleWhite.visible = false
+	GameState.collect_paint("white")
+	print("白色漏洞已填补！")
 
 
 func _on_eraser_activated() -> void:
@@ -185,15 +227,7 @@ func _clear_all_bugs() -> void:
 	_check_all_bugs_cleared()
 
 
-func _check_all_bugs_cleared() -> void:
-	dialogue_box.show_dialogue([
-		"哦？",
-		"您已经找到橡皮擦了。",
-		"……这届比上一届聪明。那个本来是之后的教学内容的。",
-		"看来我得把它藏得更隐蔽一些。记录在案。",
-		"不过，它们留下的这些缺口……我的数据库里没有任何相关记录。",
-		"这种损伤从未出现过。也许只有您能处理——毕竟，您来自我们创造者的族群。",
-	])
+
 
 
 func _after_bugs_cleared() -> void:
@@ -215,6 +249,10 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 			_trigger_stage_two_intro()
 			LayerManager.set_visible("?", true)
 			layer_panel.show_layer_in_panel("?")
+			LayerManager.set_visible("stone", true)
+			LayerManager.set_visible("watermelon", true)
+			layer_panel.show_layer_in_panel("stone")
+			layer_panel.show_layer_in_panel("watermelon")
 		2:
 			print(">>> 进入阶段三：收集颜料")
 		3:
@@ -272,3 +310,26 @@ func _position_monsters() -> void:
 			LayerManager.reorder_layer(monster, target_index)
 			monster.visible = false
 			monster.visible = true
+
+
+func _check_watermelon_puzzle() -> void:
+	if GameState.current_stage != 1:
+		return
+	var stone_index = _get_layer_index("stone")
+	var watermelon_index = _get_layer_index("watermelon")
+	if stone_index == -1 or watermelon_index == -1:
+		return
+	# stone 在 watermelon 上方时触发
+	if stone_index == watermelon_index + 1:
+		_trigger_watermelon_break()
+
+
+func _trigger_watermelon_break() -> void:
+	# 替换 watermelon 为 watermelon_open
+	LayerManager.set_visible("watermelon", false)
+	LayerManager.set_visible("watermelon_open", true)
+	layer_panel.show_layer_in_panel("watermelon_open")
+	# 自动填补红色漏洞
+	$UI/HoleLayer/HoleRed.visible = false
+	GameState.collect_paint("red")
+	print("红色漏洞已填补！")

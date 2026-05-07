@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cp1bu1dk62455"]
+[gd_scene load_steps=26 format=3 uid="uid://cp1bu1dk62455"]
 
 [ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
 [ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
@@ -13,13 +13,18 @@
 [ext_resource type="Texture2D" uid="uid://c4jkkmt38me8a" path="res://assets/sprites/rock.png" id="10_d6rmn"]
 [ext_resource type="Texture2D" uid="uid://c5wynoh2uedt" path="res://assets/sprites/coconut_tree.png" id="11_4gwpv"]
 [ext_resource type="Texture2D" uid="uid://djs0orsii7w0c" path="res://assets/sprites/icecream.png" id="12_4utb3"]
+[ext_resource type="Texture2D" uid="uid://cm4gb12qcegrx" path="res://assets/sprites/stone.png" id="12_b5jog"]
+[ext_resource type="Texture2D" uid="uid://bndnx7x1loi2r" path="res://assets/sprites/family.png" id="12_cyr16"]
 [ext_resource type="Texture2D" uid="uid://bf435014wd52q" path="res://assets/sprites/bug.png" id="13_5seri"]
+[ext_resource type="Texture2D" uid="uid://kpuhu3crkx5n" path="res://assets/sprites/watermelon.png" id="13_cyr16"]
 [ext_resource type="Script" uid="uid://cokjna5k6i1sk" path="res://scripts/DialogueBox.gd" id="14_3ks7r"]
 [ext_resource type="Texture2D" uid="uid://pgv62ouxhuu5" path="res://assets/sprites/sea_bg4.png" id="14_d6rmn"]
+[ext_resource type="Texture2D" uid="uid://bbfiaqm8cx11" path="res://assets/sprites/watermelon_open.png" id="14_h85v6"]
 [ext_resource type="Texture2D" uid="uid://bmrhiiklc5wil" path="res://assets/sprites/lanternfish.png" id="15_4gwpv"]
 [ext_resource type="Texture2D" uid="uid://b7ivuf6pst8su" path="res://assets/sprites/sea_layer5.png" id="16_4utb3"]
 [ext_resource type="Texture2D" uid="uid://cvo4lf28ni0mo" path="res://assets/sprites/hole.png" id="16_lu0gh"]
 [ext_resource type="Texture2D" uid="uid://ggn24x32wrus" path="res://assets/sprites/sea_layer6.png" id="17_vpsu2"]
+[ext_resource type="Texture2D" uid="uid://comkbkwc24ych" path="res://assets/sprites/橡皮擦.png" id="23_utorn"]
 
 [node name="LevelPearl" type="Node2D"]
 script = ExtResource("1_vx3aj")
@@ -76,6 +81,19 @@ texture = ExtResource("11_4gwpv")
 [node name="family" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "family"
 layer_name = "一家人"
+texture = ExtResource("12_cyr16")
+
+[node name="stone" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "stone"
+texture = ExtResource("12_b5jog")
+
+[node name="watermelon" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "watermelon"
+texture = ExtResource("13_cyr16")
+
+[node name="watermelon_open" parent="Layers" instance=ExtResource("2_ow1dc")]
+layer_id = "watermelon_open"
+texture = ExtResource("14_h85v6")
 
 [node name="icecream" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "icecream"
@@ -91,7 +109,7 @@ placeholder_color = Color(0.545098, 0.270588, 0.0745098, 1)
 layer_id = "monster_red"
 layer_name = "红色怪物"
 placeholder_color = Color(1, 0, 0, 1)
-sprite_position = Vector2(620, 360)
+sprite_position = Vector2(620, 230)
 texture = ExtResource("13_5seri")
 
 [node name="monster_white" parent="Layers" instance=ExtResource("2_ow1dc")]
@@ -208,7 +226,7 @@ offset_left = 1240.0
 offset_top = 124.0
 offset_right = 1272.0
 offset_bottom = 156.0
-text = "🧹"
+icon = ExtResource("23_utorn")
 
 [node name="EraserBlock" type="ColorRect" parent="UI/HUD"]
 layout_mode = 2
