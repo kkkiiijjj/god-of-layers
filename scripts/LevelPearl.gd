@@ -19,6 +19,11 @@ const ORDER_RULES = [
 
 @onready var dialogue_box = $UI/HUD/DialogueBox
 @onready var layer_panel = $UI/HUD/LayerPanel
+@onready var bubble_dialogue = $UI/HUD/BubbleDialogue
+
+var watermelon_broken: bool = false
+var family_bubble_shown: bool = false
+var brush_unlocked: bool = false
 
 
 func _ready() -> void:
@@ -58,6 +63,8 @@ func _connect_signals() -> void:
 	EventBus.puzzle_stage_changed.connect(_on_puzzle_stage_changed)
 	EventBus.layer_reordered.connect(_on_layer_reordered)
 	EventBus.layer_reordered.connect(_check_watermelon_puzzle)
+	EventBus.layer_reordered.connect(_check_family_bubble)
+	EventBus.layer_visibility_changed.connect(_on_layer_visibility_changed_check)
 
 
 func _shuffle_layers() -> void:
@@ -169,7 +176,6 @@ func _guide_returns() -> void:
 
 
 func _guide_clear_bugs() -> void:
-	# 引导清除所有 bug
 	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
 		LayerManager.set_visible(monster_id, false)
 		if layer_panel.layer_buttons.has(monster_id):
@@ -193,7 +199,7 @@ func _check_all_bugs_cleared() -> void:
 
 
 func _unlock_brush() -> void:
-	# 解锁画笔，教学白色漏洞
+	brush_unlocked = true
 	dialogue_box.show_dialogue([
 		"这支画笔交给您。",
 		"看到画面中的椰子了吗？画笔会自动吸取颜料并填补对应的漏洞。",
@@ -201,7 +207,6 @@ func _unlock_brush() -> void:
 
 
 func _fill_white_hole() -> void:
-	# 自动填补白色漏洞
 	$UI/HoleLayer/HoleWhite.visible = false
 	GameState.collect_paint("white")
 	print("白色漏洞已填补！")
@@ -221,20 +226,9 @@ func _clear_all_bugs() -> void:
 		LayerManager.set_visible(monster_id, false)
 		if layer_panel.layer_buttons.has(monster_id):
 			layer_panel.layer_buttons[monster_id].visible = false
-	# 关闭橡皮擦模式
 	layer_panel.eraser_mode = false
 	layer_panel.eraser_btn.modulate = Color.WHITE
 	_check_all_bugs_cleared()
-
-
-
-
-
-func _after_bugs_cleared() -> void:
-	dialogue_box.show_dialogue([
-		"不过，它们留下的这些缺口……我的数据库里没有任何相关记录。",
-		"这种损伤从未出现过。也许只有您能处理——毕竟，您来自我们创造者的族群。",
-	])
 
 
 func _on_puzzle_stage_changed(stage: int) -> void:
@@ -253,6 +247,10 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 			LayerManager.set_visible("watermelon", true)
 			layer_panel.show_layer_in_panel("stone")
 			layer_panel.show_layer_in_panel("watermelon")
+			var sea_bg4_idx = _get_layer_index("sea_bg4")
+			var stone_layer = _find_layer("stone")
+			if stone_layer:
+				LayerManager.reorder_layer(stone_layer, sea_bg4_idx - 1)
 		2:
 			print(">>> 进入阶段三：收集颜料")
 		3:
@@ -312,24 +310,56 @@ func _position_monsters() -> void:
 			monster.visible = true
 
 
+func _check_family_bubble() -> void:
+	if GameState.current_stage != 1:
+		return
+	if not brush_unlocked:
+		return
+	if family_bubble_shown:
+		return
+	var family_layer = _find_layer("family")
+	if not family_layer or not family_layer.visible:
+		return
+	var family_index = _get_layer_index("family")
+	var must_be_below = ["sea_layer6", "sea_layer5", "sea_bg4", "lanternfish", "beach", "sea_front"]
+	for lid in must_be_below:
+		var idx = _get_layer_index(lid)
+		if idx == -1:
+			continue
+		if idx >= family_index:
+			return
+	family_bubble_shown = true
+	bubble_dialogue.show_bubble("买了西瓜但是没有刀，怎么打开呢？", Vector2(400, 300))
+
+
 func _check_watermelon_puzzle() -> void:
 	if GameState.current_stage != 1:
+		return
+	if watermelon_broken:
 		return
 	var stone_index = _get_layer_index("stone")
 	var watermelon_index = _get_layer_index("watermelon")
 	if stone_index == -1 or watermelon_index == -1:
 		return
-	# stone 在 watermelon 上方时触发
 	if stone_index == watermelon_index + 1:
+		watermelon_broken = true
+		bubble_dialogue.show_bubble("有了，就用那个石头砸开吧！", Vector2(400, 300))
+		await get_tree().create_timer(2.0).timeout
 		_trigger_watermelon_break()
 
 
 func _trigger_watermelon_break() -> void:
-	# 替换 watermelon 为 watermelon_open
+	bubble_dialogue.hide_bubble()
 	LayerManager.set_visible("watermelon", false)
 	LayerManager.set_visible("watermelon_open", true)
 	layer_panel.show_layer_in_panel("watermelon_open")
-	# 自动填补红色漏洞
+	LayerManager.set_visible("stone", false)
+	if layer_panel.layer_buttons.has("stone"):
+		layer_panel.layer_buttons["stone"].visible = false
 	$UI/HoleLayer/HoleRed.visible = false
 	GameState.collect_paint("red")
 	print("红色漏洞已填补！")
+
+
+func _on_layer_visibility_changed_check(_layer_id: String, _visible: bool) -> void:
+	_check_family_bubble()

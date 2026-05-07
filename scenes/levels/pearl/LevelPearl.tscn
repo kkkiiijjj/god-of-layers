@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://cp1bu1dk62455"]
+[gd_scene load_steps=28 format=3 uid="uid://cp1bu1dk62455"]
 
 [ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
 [ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
@@ -25,6 +25,14 @@
 [ext_resource type="Texture2D" uid="uid://cvo4lf28ni0mo" path="res://assets/sprites/hole.png" id="16_lu0gh"]
 [ext_resource type="Texture2D" uid="uid://ggn24x32wrus" path="res://assets/sprites/sea_layer6.png" id="17_vpsu2"]
 [ext_resource type="Texture2D" uid="uid://comkbkwc24ych" path="res://assets/sprites/橡皮擦.png" id="23_utorn"]
+[ext_resource type="Script" uid="uid://bd35x2chcmvvk" path="res://scripts/BubbleDialogue.gd" id="25_h85v6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cyr16"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="LevelPearl" type="Node2D"]
 script = ExtResource("1_vx3aj")
@@ -235,6 +243,23 @@ offset_top = 124.0
 offset_right = 1272.0
 offset_bottom = 156.0
 color = Color(0.423529, 0.313726, 0.109804, 1)
+
+[node name="BubbleDialogue" type="PanelContainer" parent="UI/HUD"]
+visible = false
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_cyr16")
+script = ExtResource("25_h85v6")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/BubbleDialogue"]
+layout_mode = 2
+
+[node name="BubbleText" type="Label" parent="UI/HUD/BubbleDialogue/MarginContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+autowrap_mode = 2
 
 [node name="HoleLayer" type="CanvasLayer" parent="UI"]
 layer = 100
