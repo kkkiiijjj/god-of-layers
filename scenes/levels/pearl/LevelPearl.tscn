@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://cp1bu1dk62455"]
+[gd_scene load_steps=32 format=3 uid="uid://cp1bu1dk62455"]
 
 [ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
 [ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
@@ -27,7 +27,9 @@
 [ext_resource type="Texture2D" uid="uid://dvyknek5yrt5" path="res://assets/sprites/history.png" id="22_itlvw"]
 [ext_resource type="Texture2D" uid="uid://bbgemo76f1stn" path="res://assets/sprites/fam_buy_ice.png" id="23_it0yg"]
 [ext_resource type="Texture2D" uid="uid://comkbkwc24ych" path="res://assets/sprites/橡皮擦.png" id="23_utorn"]
+[ext_resource type="Texture2D" uid="uid://ctx6n7ja4qec8" path="res://assets/sprites/lanternfish_move.png" id="24_s1p6i"]
 [ext_resource type="Script" uid="uid://bd35x2chcmvvk" path="res://scripts/BubbleDialogue.gd" id="25_h85v6"]
+[ext_resource type="Texture2D" uid="uid://djooxh4p8k5jw" path="res://assets/sprites/ink.png" id="25_p5i8u"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cyr16"]
 bg_color = Color(1, 1, 1, 1)
@@ -170,6 +172,16 @@ texture = ExtResource("22_itlvw")
 visible = false
 layer_id = "fam_buy_ice"
 texture = ExtResource("23_it0yg")
+
+[node name="lanternfish_move" parent="Layers" instance=ExtResource("2_ow1dc")]
+visible = false
+layer_id = "lanternfish_move"
+texture = ExtResource("24_s1p6i")
+
+[node name="ink" parent="Layers" instance=ExtResource("2_ow1dc")]
+visible = false
+layer_id = "ink"
+texture = ExtResource("25_p5i8u")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 

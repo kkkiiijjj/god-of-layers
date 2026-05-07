@@ -26,6 +26,7 @@ var icecream_puzzle_done: bool = false
 var watermelon_broken: bool = false
 var family_bubble_shown: bool = false
 var brush_unlocked: bool = false
+var ink_puzzle_done: bool = false
 
 
 func _ready() -> void:
@@ -68,6 +69,7 @@ func _connect_signals() -> void:
 	EventBus.layer_reordered.connect(_check_family_bubble)
 	EventBus.layer_visibility_changed.connect(_on_layer_visibility_changed_check)
 	EventBus.layer_reordered.connect(_check_icecream_puzzle)
+	EventBus.layer_reordered.connect(_check_ink_puzzle)
 
 
 func _shuffle_layers() -> void:
@@ -98,6 +100,8 @@ func _shuffle_layers() -> void:
 	LayerManager.set_visible("watermelon_open", false)
 	LayerManager.set_visible("history", false)
 	LayerManager.set_visible("fam_buy_ice", false)
+	LayerManager.set_visible("lanternfish_move", false)
+	LayerManager.set_visible("ink", false)
 
 
 func _on_layer_reordered() -> void:
@@ -423,3 +427,55 @@ func _trigger_icecream_puzzle() -> void:
 	$UI/HoleLayer/HoleGreen.visible = false
 	GameState.collect_paint("green")
 	print("绿色漏洞已填补！")
+	
+	
+	
+func _check_ink_puzzle() -> void:
+	if GameState.current_stage != 1:
+		return
+	if ink_puzzle_done:
+		return
+	var lanternfish_index = _get_layer_index("lanternfish")
+	var sea_layer5_index = _get_layer_index("sea_layer5")
+	if lanternfish_index == -1 or sea_layer5_index == -1:
+		return
+	if lanternfish_index == sea_layer5_index + 1:
+		ink_puzzle_done = true
+		_trigger_ink_puzzle()
+
+
+func _trigger_ink_puzzle() -> void:
+	# lanternfish 替换为 lanternfish_move
+	var lanternfish_index = _get_layer_index("lanternfish")
+	LayerManager.set_visible("lanternfish", false)
+	LayerManager.set_visible("lanternfish_move", true)
+	layer_panel.show_layer_in_panel("lanternfish_move")
+	if layer_panel.layer_buttons.has("lanternfish"):
+		layer_panel.layer_buttons["lanternfish"].visible = false
+	var lf_move = _find_layer("lanternfish_move")
+	if lf_move:
+		LayerManager.reorder_layer(lf_move, lanternfish_index)
+
+	# sea_layer5 替换为 ink
+	var sea5_index = _get_layer_index("sea_layer5")
+	LayerManager.set_visible("sea_layer5", false)
+	LayerManager.set_visible("ink", true)
+	layer_panel.show_layer_in_panel("ink")
+	if layer_panel.layer_buttons.has("sea_layer5"):
+		layer_panel.layer_buttons["sea_layer5"].visible = false
+	var ink_layer = _find_layer("ink")
+	if ink_layer:
+		LayerManager.reorder_layer(ink_layer, sea5_index)
+
+	# 2秒后 ink 替换回 sea_layer5
+	await get_tree().create_timer(2.0).timeout
+	LayerManager.set_visible("ink", false)
+	if layer_panel.layer_buttons.has("ink"):
+		layer_panel.layer_buttons["ink"].visible = false
+	LayerManager.set_visible("sea_layer5", true)
+	layer_panel.show_layer_in_panel("sea_layer5")
+
+	# 填补蓝色漏洞
+	$UI/HoleLayer/HoleBlue.visible = false
+	GameState.collect_paint("blue")
+	print("蓝色漏洞已填补！")
