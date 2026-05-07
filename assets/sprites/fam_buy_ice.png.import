@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmojaup6yo1w2"
-path="res://.godot/imported/coconut_tree.png-a2b349b37b758b4d6a22807fa953d7e5.ctex"
+uid="uid://bbgemo76f1stn"
+path="res://.godot/imported/fam_buy_ice.png-9a3db3dea4cea9cfc598ea5e2ec9f93a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/coconut_tree.png"
-dest_files=["res://.godot/imported/coconut_tree.png-a2b349b37b758b4d6a22807fa953d7e5.ctex"]
+source_file="res://assets/sprites/fam_buy_ice.png"
+dest_files=["res://.godot/imported/fam_buy_ice.png-9a3db3dea4cea9cfc598ea5e2ec9f93a.ctex"]
 
 [params]
 

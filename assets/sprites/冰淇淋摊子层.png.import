@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmojaup6yo1w2"
-path="res://.godot/imported/coconut_tree.png-a2b349b37b758b4d6a22807fa953d7e5.ctex"
+uid="uid://clttx4fxqqaie"
+path="res://.godot/imported/冰淇淋摊子层.png-5f3e5a7702c3efaa5ff49e72e75e519f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/coconut_tree.png"
-dest_files=["res://.godot/imported/coconut_tree.png-a2b349b37b758b4d6a22807fa953d7e5.ctex"]
+source_file="res://assets/sprites/冰淇淋摊子层.png"
+dest_files=["res://.godot/imported/冰淇淋摊子层.png-5f3e5a7702c3efaa5ff49e72e75e519f.ctex"]
 
 [params]
 

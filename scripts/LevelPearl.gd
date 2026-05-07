@@ -20,6 +20,8 @@ const ORDER_RULES = [
 @onready var dialogue_box = $UI/HUD/DialogueBox
 @onready var layer_panel = $UI/HUD/LayerPanel
 @onready var bubble_dialogue = $UI/HUD/BubbleDialogue
+@onready var bubble_dialogue2 = $UI/HUD/BubbleDialogue2
+var icecream_puzzle_done: bool = false
 
 var watermelon_broken: bool = false
 var family_bubble_shown: bool = false
@@ -65,6 +67,7 @@ func _connect_signals() -> void:
 	EventBus.layer_reordered.connect(_check_watermelon_puzzle)
 	EventBus.layer_reordered.connect(_check_family_bubble)
 	EventBus.layer_visibility_changed.connect(_on_layer_visibility_changed_check)
+	EventBus.layer_reordered.connect(_check_icecream_puzzle)
 
 
 func _shuffle_layers() -> void:
@@ -93,6 +96,8 @@ func _shuffle_layers() -> void:
 	LayerManager.set_visible("stone", false)
 	LayerManager.set_visible("watermelon", false)
 	LayerManager.set_visible("watermelon_open", false)
+	LayerManager.set_visible("history", false)
+	LayerManager.set_visible("fam_buy_ice", false)
 
 
 func _on_layer_reordered() -> void:
@@ -251,6 +256,13 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 			var stone_layer = _find_layer("stone")
 			if stone_layer:
 				LayerManager.reorder_layer(stone_layer, sea_bg4_idx - 1)
+			LayerManager.set_visible("history", true)
+			layer_panel.show_layer_in_panel("history")
+			# history 放到 icecream 下层
+			var icecream_idx = _get_layer_index("icecream")
+			var history_layer = _find_layer("history")
+			if history_layer:
+				LayerManager.reorder_layer(history_layer, icecream_idx - 1)
 		2:
 			print(">>> 进入阶段三：收集颜料")
 		3:
@@ -359,7 +371,55 @@ func _trigger_watermelon_break() -> void:
 	$UI/HoleLayer/HoleRed.visible = false
 	GameState.collect_paint("red")
 	print("红色漏洞已填补！")
+	_show_watermelon_done_bubble()
 
 
 func _on_layer_visibility_changed_check(_layer_id: String, _visible: bool) -> void:
 	_check_family_bubble()
+
+
+func _show_watermelon_done_bubble() -> void:
+	bubble_dialogue.show_bubble("太好了，有西瓜吃了。", Vector2(300, 350))
+	bubble_dialogue2.show_bubble("我不想吃西瓜，我想吃冰淇淋。", Vector2(500, 350))
+	await get_tree().create_timer(3.0).timeout
+	bubble_dialogue.show_bubble("冰淇淋太贵了，回家再给你买。", Vector2(300, 350))
+	bubble_dialogue2.hide_bubble()
+	await get_tree().create_timer(3.0).timeout
+	bubble_dialogue.hide_bubble()
+
+
+func _check_icecream_puzzle() -> void:
+	if GameState.current_stage != 1:
+		return
+	if icecream_puzzle_done:
+		return
+	if not brush_unlocked:
+		return
+	var history_index = _get_layer_index("history")
+	var icecream_index = _get_layer_index("icecream")
+	if history_index == -1 or icecream_index == -1:
+		return
+	if history_index == icecream_index + 1:
+		icecream_puzzle_done = true
+		_trigger_icecream_puzzle()
+
+
+func _trigger_icecream_puzzle() -> void:
+	bubble_dialogue.hide_bubble()
+	bubble_dialogue2.hide_bubble()
+	bubble_dialogue.show_bubble("爸爸你看，冰淇淋降价了！", Vector2(500, 350))
+	await get_tree().create_timer(2.0).timeout
+	bubble_dialogue2.show_bubble("好吧，那给你买一个。", Vector2(300, 350))
+	await get_tree().create_timer(2.0).timeout
+	bubble_dialogue.hide_bubble()
+	bubble_dialogue2.hide_bubble()
+	# 替换 family 为 fam_buy_ice
+	LayerManager.set_visible("family", false)
+	LayerManager.set_visible("fam_buy_ice", true)
+	layer_panel.show_layer_in_panel("fam_buy_ice")
+	if layer_panel.layer_buttons.has("family"):
+		layer_panel.layer_buttons["family"].visible = false
+	# 填补绿色漏洞
+	$UI/HoleLayer/HoleGreen.visible = false
+	GameState.collect_paint("green")
+	print("绿色漏洞已填补！")

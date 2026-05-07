@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cp1bu1dk62455"]
+[gd_scene load_steps=30 format=3 uid="uid://cp1bu1dk62455"]
 
 [ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
 [ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
@@ -11,8 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://o1aiybi3mfm1" path="res://assets/sprites/sea_front.png" id="8_mkle6"]
 [ext_resource type="Texture2D" uid="uid://c22x4mfv5d75l" path="res://assets/sprites/seagull.png" id="9_h3i0y"]
 [ext_resource type="Texture2D" uid="uid://c4jkkmt38me8a" path="res://assets/sprites/rock.png" id="10_d6rmn"]
-[ext_resource type="Texture2D" uid="uid://c5wynoh2uedt" path="res://assets/sprites/coconut_tree.png" id="11_4gwpv"]
-[ext_resource type="Texture2D" uid="uid://djs0orsii7w0c" path="res://assets/sprites/icecream.png" id="12_4utb3"]
+[ext_resource type="Texture2D" uid="uid://dmojaup6yo1w2" path="res://assets/sprites/coconut_tree.png" id="11_4gwpv"]
 [ext_resource type="Texture2D" uid="uid://cm4gb12qcegrx" path="res://assets/sprites/stone.png" id="12_b5jog"]
 [ext_resource type="Texture2D" uid="uid://bndnx7x1loi2r" path="res://assets/sprites/family.png" id="12_cyr16"]
 [ext_resource type="Texture2D" uid="uid://bf435014wd52q" path="res://assets/sprites/bug.png" id="13_5seri"]
@@ -22,8 +21,11 @@
 [ext_resource type="Texture2D" uid="uid://bbfiaqm8cx11" path="res://assets/sprites/watermelon_open.png" id="14_h85v6"]
 [ext_resource type="Texture2D" uid="uid://bmrhiiklc5wil" path="res://assets/sprites/lanternfish.png" id="15_4gwpv"]
 [ext_resource type="Texture2D" uid="uid://b7ivuf6pst8su" path="res://assets/sprites/sea_layer5.png" id="16_4utb3"]
+[ext_resource type="Texture2D" uid="uid://clttx4fxqqaie" path="res://assets/sprites/冰淇淋摊子层.png" id="16_itlvw"]
 [ext_resource type="Texture2D" uid="uid://cvo4lf28ni0mo" path="res://assets/sprites/hole.png" id="16_lu0gh"]
 [ext_resource type="Texture2D" uid="uid://ggn24x32wrus" path="res://assets/sprites/sea_layer6.png" id="17_vpsu2"]
+[ext_resource type="Texture2D" uid="uid://dvyknek5yrt5" path="res://assets/sprites/history.png" id="22_itlvw"]
+[ext_resource type="Texture2D" uid="uid://bbgemo76f1stn" path="res://assets/sprites/fam_buy_ice.png" id="23_it0yg"]
 [ext_resource type="Texture2D" uid="uid://comkbkwc24ych" path="res://assets/sprites/橡皮擦.png" id="23_utorn"]
 [ext_resource type="Script" uid="uid://bd35x2chcmvvk" path="res://scripts/BubbleDialogue.gd" id="25_h85v6"]
 
@@ -106,7 +108,7 @@ texture = ExtResource("14_h85v6")
 [node name="icecream" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "icecream"
 layer_name = "冰淇淋摊"
-texture = ExtResource("12_4utb3")
+texture = ExtResource("16_itlvw")
 
 [node name="tavern" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "tavern"
@@ -117,7 +119,7 @@ placeholder_color = Color(0.545098, 0.270588, 0.0745098, 1)
 layer_id = "monster_red"
 layer_name = "红色怪物"
 placeholder_color = Color(1, 0, 0, 1)
-sprite_position = Vector2(620, 230)
+sprite_position = Vector2(600, 230)
 texture = ExtResource("13_5seri")
 
 [node name="monster_white" parent="Layers" instance=ExtResource("2_ow1dc")]
@@ -158,6 +160,16 @@ texture = ExtResource("17_vpsu2")
 
 [node name="?" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "?"
+
+[node name="history" parent="Layers" instance=ExtResource("2_ow1dc")]
+visible = false
+layer_id = "history"
+texture = ExtResource("22_itlvw")
+
+[node name="fam_buy_ice" parent="Layers" instance=ExtResource("2_ow1dc")]
+visible = false
+layer_id = "fam_buy_ice"
+texture = ExtResource("23_it0yg")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
@@ -260,6 +272,19 @@ layout_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 autowrap_mode = 2
+
+[node name="BubbleDialogue2" type="PanelContainer" parent="UI/HUD"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("25_h85v6")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/BubbleDialogue2"]
+layout_mode = 2
+
+[node name="BubbleText" type="Label" parent="UI/HUD/BubbleDialogue2/MarginContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 
 [node name="HoleLayer" type="CanvasLayer" parent="UI"]
 layer = 100

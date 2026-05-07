@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmojaup6yo1w2"
-path="res://.godot/imported/coconut_tree.png-a2b349b37b758b4d6a22807fa953d7e5.ctex"
+uid="uid://dvyknek5yrt5"
+path="res://.godot/imported/history.png-81c921a5739b856017fd419f8c7ea781.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/coconut_tree.png"
-dest_files=["res://.godot/imported/coconut_tree.png-a2b349b37b758b4d6a22807fa953d7e5.ctex"]
+source_file="res://assets/sprites/history.png"
+dest_files=["res://.godot/imported/history.png-81c921a5739b856017fd419f8c7ea781.ctex"]
 
 [params]
 
