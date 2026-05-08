@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://cp1bu1dk62455"]
+[gd_scene load_steps=33 format=3 uid="uid://cp1bu1dk62455"]
 
 [ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
 [ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
@@ -23,6 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://b7ivuf6pst8su" path="res://assets/sprites/sea_layer5.png" id="16_4utb3"]
 [ext_resource type="Texture2D" uid="uid://clttx4fxqqaie" path="res://assets/sprites/冰淇淋摊子层.png" id="16_itlvw"]
 [ext_resource type="Texture2D" uid="uid://cvo4lf28ni0mo" path="res://assets/sprites/hole.png" id="16_lu0gh"]
+[ext_resource type="Texture2D" uid="uid://b1jl5i7o2jyso" path="res://assets/sprites/tavern.png" id="17_p5i8u"]
 [ext_resource type="Texture2D" uid="uid://ggn24x32wrus" path="res://assets/sprites/sea_layer6.png" id="17_vpsu2"]
 [ext_resource type="Texture2D" uid="uid://dvyknek5yrt5" path="res://assets/sprites/history.png" id="22_itlvw"]
 [ext_resource type="Texture2D" uid="uid://bbgemo76f1stn" path="res://assets/sprites/fam_buy_ice.png" id="23_it0yg"]
@@ -113,9 +114,11 @@ layer_name = "冰淇淋摊"
 texture = ExtResource("16_itlvw")
 
 [node name="tavern" parent="Layers" instance=ExtResource("2_ow1dc")]
+visible = false
 layer_id = "tavern"
 layer_name = "小酒馆"
 placeholder_color = Color(0.545098, 0.270588, 0.0745098, 1)
+texture = ExtResource("17_p5i8u")
 
 [node name="monster_red" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "monster_red"

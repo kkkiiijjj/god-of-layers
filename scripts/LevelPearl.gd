@@ -27,6 +27,8 @@ var watermelon_broken: bool = false
 var family_bubble_shown: bool = false
 var brush_unlocked: bool = false
 var ink_puzzle_done: bool = false
+var mermaid_bubble_shown: bool = false
+var family_done: bool = false
 
 
 func _ready() -> void:
@@ -70,6 +72,8 @@ func _connect_signals() -> void:
 	EventBus.layer_visibility_changed.connect(_on_layer_visibility_changed_check)
 	EventBus.layer_reordered.connect(_check_icecream_puzzle)
 	EventBus.layer_reordered.connect(_check_ink_puzzle)
+	EventBus.layer_reordered.connect(_check_mermaid_bubble)
+	EventBus.layer_visibility_changed.connect(_on_visibility_changed_mermaid)
 
 
 func _shuffle_layers() -> void:
@@ -376,6 +380,7 @@ func _trigger_watermelon_break() -> void:
 	GameState.collect_paint("red")
 	print("红色漏洞已填补！")
 	_show_watermelon_done_bubble()
+	_check_family_done()
 
 
 func _on_layer_visibility_changed_check(_layer_id: String, _visible: bool) -> void:
@@ -427,6 +432,7 @@ func _trigger_icecream_puzzle() -> void:
 	$UI/HoleLayer/HoleGreen.visible = false
 	GameState.collect_paint("green")
 	print("绿色漏洞已填补！")
+	_check_family_done()
 	
 	
 	
@@ -479,3 +485,49 @@ func _trigger_ink_puzzle() -> void:
 	$UI/HoleLayer/HoleBlue.visible = false
 	GameState.collect_paint("blue")
 	print("蓝色漏洞已填补！")
+	
+	
+func _on_visibility_changed_mermaid(_layer_id: String, _visible: bool) -> void:
+	_check_mermaid_bubble()
+
+
+func _check_mermaid_bubble() -> void:
+	if not brush_unlocked:
+		return
+	if mermaid_bubble_shown:
+		return
+	if mermaid_bubble_shown:
+		return
+	var sea6_layer = _find_layer("sea_layer6")
+	if not sea6_layer or not sea6_layer.visible:
+		return
+	var sea6_index = _get_layer_index("sea_layer6")
+	# 检查上方是否有可见图层
+	for i in range(sea6_index + 1, LayerManager.layers.size()):
+		if LayerManager.layers[i].visible:
+			return
+	mermaid_bubble_shown = true
+	bubble_dialogue.show_bubble(
+		"我的珍珠项链去哪了，上周去海边玩之后就找不到了。马上舞会要开始了，就这么去参加琳达肯定要取笑我的，我该怎么办啊。",
+		Vector2(600, 400)
+	)
+
+
+
+func _check_family_done() -> void:
+	if family_done:
+		return
+	if not watermelon_broken or not icecream_puzzle_done:
+		return
+	family_done = true
+	await get_tree().create_timer(1.0).timeout
+	bubble_dialogue.show_bubble("太阳快落山了，我们去小酒馆喝一杯吧。", Vector2(400, 350), 3.0)
+	await get_tree().create_timer(3.5).timeout
+	# fam_buy_ice 消失，tavern 出现
+	LayerManager.set_visible("fam_buy_ice", false)
+	if layer_panel.layer_buttons.has("fam_buy_ice"):
+		layer_panel.layer_buttons["fam_buy_ice"].visible = false
+	LayerManager.set_visible("tavern", true)
+	layer_panel.show_layer_in_panel("tavern")
+	# tavern 放到最上层
+	LayerManager.reorder_layer(_find_layer("tavern"), LayerManager.layers.size() - 1)
