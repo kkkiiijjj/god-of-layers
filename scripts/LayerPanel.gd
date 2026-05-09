@@ -8,11 +8,12 @@ var drop_indicator: Control = null
 var is_dragging: bool = false
 var insert_index: int = -1
 var selected_id: String = ""
-var opacity_slider: HSlider = null
-var opacity_label: Label = null
 var panel_visible_ids: Array[String] = []
 var collapsed: bool = false
 var collapse_btn: Button = null
+var cleared_ids: Array[String] = []
+
+
 @onready var eraser_btn: Button = get_parent().get_node("EraserBtn")
 @onready var eraser_block: ColorRect = get_parent().get_node("EraserBlock")
 
@@ -66,11 +67,10 @@ func _create_drop_indicator() -> void:
 func _build_panel() -> void:
 	var vbox = $ScrollContainer/VBoxContainer
 	for child in vbox.get_children():
-		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator" and child.name != "EraserBtn" and child.name != "EraserBlock":
+		if child.name != "Title" and child != drop_indicator and child.name != "EraserBtn" and child.name != "EraserBlock":
 			child.queue_free()
 	layer_buttons.clear()
 
-	_build_opacity_row(vbox)
 
 	var layers_reversed = LayerManager.layers.duplicate()
 	layers_reversed.reverse()
@@ -79,69 +79,11 @@ func _build_panel() -> void:
 		var layer_id = layer.get_meta("layer_id", "")
 		var row = _create_layer_row(layer, layer_id)
 		vbox.add_child(row)
-		row.visible = layer.visible or layer_id in panel_visible_ids
+		row.visible = (layer.visible or layer_id in panel_visible_ids) and layer_id not in cleared_ids
 
 
-func _build_opacity_row(vbox: VBoxContainer) -> void:
-	if vbox.has_node("OpacityRow"):
-		return
-
-	var opacity_row = VBoxContainer.new()
-	opacity_row.name = "OpacityRow"
-	opacity_row.custom_minimum_size = Vector2(180, 56)
-
-	var top_row = HBoxContainer.new()
-	var opacity_title = Label.new()
-	opacity_title.text = "不透明度"
-	opacity_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-	opacity_label = Label.new()
-	opacity_label.text = "100%"
-	opacity_label.custom_minimum_size = Vector2(40, 0)
-	opacity_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-
-	top_row.add_child(opacity_title)
-	top_row.add_child(opacity_label)
-
-	opacity_slider = HSlider.new()
-	opacity_slider.min_value = 0.0
-	opacity_slider.max_value = 1.0
-	opacity_slider.step = 0.01
-	opacity_slider.value = 1.0
-	opacity_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	opacity_slider.value_changed.connect(_on_opacity_changed)
-
-	opacity_row.add_child(top_row)
-	opacity_row.add_child(opacity_slider)
-
-	var sep = HSeparator.new()
-	sep.name = "Separator"
-
-	vbox.add_child(opacity_row)
-	vbox.add_child(sep)
 
 
-func _on_opacity_changed(value: float) -> void:
-	if selected_id == "":
-		return
-	LayerManager.set_opacity(selected_id, value)
-	opacity_label.text = str(int(value * 100)) + "%"
-
-
-func _select_layer(layer_id: String) -> void:
-	if selected_id != "" and layer_buttons.has(selected_id):
-		layer_buttons[selected_id].modulate = Color.WHITE
-
-	selected_id = layer_id
-
-	if layer_buttons.has(selected_id):
-		layer_buttons[selected_id].modulate = Color(0.5, 0.8, 1.0)
-
-	var layer = _find_layer_by_id(layer_id)
-	if layer and opacity_slider:
-		var current_opacity = layer.modulate.a
-		opacity_slider.value = current_opacity
-		opacity_label.text = str(int(current_opacity * 100)) + "%"
 
 
 func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
@@ -178,9 +120,7 @@ func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 	label.flat = true
 	label.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	label.pressed.connect(func():
-		_select_layer(layer_id)
-	)
+	
 
 	row.add_child(handle)
 	row.add_child(eye_btn)
@@ -192,7 +132,6 @@ func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 func _on_handle_input(event: InputEvent, layer_id: String) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			_select_layer(layer_id)
 			dragging_id = layer_id
 			is_dragging = true
 			_show_drag_preview(layer_id)
@@ -266,7 +205,7 @@ func _end_drag() -> void:
 	var vbox = $ScrollContainer/VBoxContainer
 	var rows = []
 	for child in vbox.get_children():
-		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator" and child.name != "EraserBtn" and child.name != "EraserBlock":
+		if child.name != "Title" and child != drop_indicator and child.name != "EraserBtn" and child.name != "EraserBlock":
 			rows.append(child)
 
 	var total = LayerManager.layers.size()

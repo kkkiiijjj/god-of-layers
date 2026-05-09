@@ -32,7 +32,7 @@ var brush_unlocked: bool = false
 var ink_puzzle_done: bool = false
 var mermaid_bubble_shown: bool = false
 var family_done: bool = false
-
+var eraser_wrong_clicks: int = 0
 
 func _ready() -> void:
 	GameState.start_level("pearl")
@@ -165,12 +165,14 @@ func _trigger_stage_two_intro() -> void:
 
 
 func _start_guide_timer() -> void:
-	var timer = get_tree().create_timer(10.0)
+	var timer = get_tree().create_timer(180.0)
 	timer.timeout.connect(_guide_returns)
 
 
 func _guide_returns() -> void:
 	var bugs_cleared = true
+	if brush_unlocked:
+		return
 	for monster_id in ["monster_blue", "monster_red", "monster_green", "monster_white"]:
 		var layer = _find_layer(monster_id)
 		if layer and layer.visible:
@@ -198,6 +200,7 @@ func _guide_clear_bugs() -> void:
 		LayerManager.set_visible(monster_id, false)
 		if layer_panel.layer_buttons.has(monster_id):
 			layer_panel.layer_buttons[monster_id].visible = false
+		layer_panel.cleared_ids.append(monster_id)
 	dialogue_box.show_dialogue([
 		"处理完毕。",
 		"它们留下的这些缺口……我的数据库里没有任何相关记录。",
@@ -221,6 +224,7 @@ func _unlock_brush() -> void:
 	dialogue_box.show_dialogue([
 		"这支画笔交给您。",
 		"看到画面中的椰子了吗？画笔会自动吸取颜料并填补对应的漏洞。",
+		"对了——在图层栏把某些图层拖动到相关图层旁边，会发生神奇的事情哦。",
 	], _fill_white_hole)
 
 
@@ -235,6 +239,9 @@ func _on_eraser_activated() -> void:
 	for lid in cover_layers:
 		var layer = _find_layer(lid)
 		if layer and layer.visible:
+			if eraser_wrong_clicks < 3:
+				eraser_wrong_clicks += 1
+				bubble_dialogue.show_bubble("橡皮擦目前只能用于擦除bug哦，找到所有monster再使用它吧！", Vector2(540, 360), 2.0)
 			return
 	_clear_all_bugs()
 
@@ -244,6 +251,7 @@ func _clear_all_bugs() -> void:
 		LayerManager.set_visible(monster_id, false)
 		if layer_panel.layer_buttons.has(monster_id):
 			layer_panel.layer_buttons[monster_id].visible = false
+		layer_panel.cleared_ids.append(monster_id)
 	layer_panel.eraser_mode = false
 	layer_panel.eraser_btn.modulate = Color.WHITE
 	_check_all_bugs_cleared()
@@ -358,6 +366,12 @@ func _check_family_bubble() -> void:
 
 
 func _check_watermelon_puzzle() -> void:
+	if GameState.current_stage != 1:
+		return
+	if watermelon_broken:
+		return
+	if not family_bubble_shown:
+		return
 	if GameState.current_stage != 1:
 		return
 	if watermelon_broken:
@@ -514,7 +528,8 @@ func _check_mermaid_bubble() -> void:
 	mermaid_bubble_shown = true
 	bubble_dialogue.show_bubble(
 		"我的珍珠项链去哪了，上周去海边玩之后就找不到了。马上舞会要开始了，就这么去参加琳达肯定要取笑我的，我该怎么办啊。",
-		Vector2(600, 400)
+		Vector2(600, 400),
+		6.0
 	)
 
 
@@ -601,7 +616,7 @@ func _start_tavern_dialogue() -> void:
 func _on_pearl_copy(layer_id: String) -> void:
 	if layer_id != "pearl":
 		return
-	# 复制 pearl 图层
+	# 复制 pearl 图层，副本留在原处
 	var copy = LayerManager.copy_layer("pearl", "pearl_copy")
 	if not copy:
 		return
@@ -610,8 +625,12 @@ func _on_pearl_copy(layer_id: String) -> void:
 	var original = _find_layer("pearl")
 	if original:
 		LayerManager.reorder_layer(original, sea6_index + 1)
+		original.visible = true
 	# 更新面板
 	layer_panel.show_layer_in_panel("pearl_copy")
-	# 关卡完成
+	# 美人鱼台词
 	await get_tree().create_timer(1.0).timeout
+	bubble_dialogue.show_bubble("？？！我眼花了吗？它怎么就在我眼前？", Vector2(700, 400), 4.0)
+	await get_tree().create_timer(4.5).timeout
+	# 关卡完成
 	_on_level_complete()
