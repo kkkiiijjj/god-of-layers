@@ -337,3 +337,22 @@ func show_layer_in_panel(layer_id: String) -> void:
 		panel_visible_ids.append(layer_id)
 	if layer_buttons.has(layer_id):
 		layer_buttons[layer_id].visible = true
+
+
+func add_copy_button_to(layer_id: String) -> void:
+	if not layer_buttons.has(layer_id):
+		return
+	var row = layer_buttons[layer_id]
+	var copy_btn = Button.new()
+	copy_btn.text = "⧉"
+	copy_btn.custom_minimum_size = Vector2(32, 0)
+	copy_btn.pressed.connect(func():
+		_on_copy_pressed(layer_id, copy_btn)
+	)
+	row.add_child(copy_btn)
+
+
+func _on_copy_pressed(layer_id: String, btn: Button) -> void:
+	# 只能用一次
+	btn.disabled = true
+	EventBus.layer_copy_requested.emit(layer_id)

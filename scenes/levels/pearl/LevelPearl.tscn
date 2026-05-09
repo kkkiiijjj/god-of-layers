@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://cp1bu1dk62455"]
+[gd_scene load_steps=36 format=3 uid="uid://cp1bu1dk62455"]
 
 [ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
 [ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
@@ -25,6 +25,7 @@
 [ext_resource type="Texture2D" uid="uid://cvo4lf28ni0mo" path="res://assets/sprites/hole.png" id="16_lu0gh"]
 [ext_resource type="Texture2D" uid="uid://b1jl5i7o2jyso" path="res://assets/sprites/tavern.png" id="17_p5i8u"]
 [ext_resource type="Texture2D" uid="uid://ggn24x32wrus" path="res://assets/sprites/sea_layer6.png" id="17_vpsu2"]
+[ext_resource type="Texture2D" uid="uid://ddl13s8kje3r2" path="res://assets/sprites/pearl.png" id="18_2q0lt"]
 [ext_resource type="Texture2D" uid="uid://dvyknek5yrt5" path="res://assets/sprites/history.png" id="22_itlvw"]
 [ext_resource type="Texture2D" uid="uid://bbgemo76f1stn" path="res://assets/sprites/fam_buy_ice.png" id="23_it0yg"]
 [ext_resource type="Texture2D" uid="uid://comkbkwc24ych" path="res://assets/sprites/橡皮擦.png" id="23_utorn"]
@@ -38,6 +39,12 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2q0lt"]
+bg_color = Color(0.962554, 0.455756, 0.354254, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5l8tp"]
+bg_color = Color(0.284405, 0.584916, 0.369379, 1)
 
 [node name="LevelPearl" type="Node2D"]
 script = ExtResource("1_vx3aj")
@@ -119,6 +126,11 @@ layer_id = "tavern"
 layer_name = "小酒馆"
 placeholder_color = Color(0.545098, 0.270588, 0.0745098, 1)
 texture = ExtResource("17_p5i8u")
+
+[node name="pearl" parent="Layers" instance=ExtResource("2_ow1dc")]
+visible = false
+layer_id = "pearl"
+texture = ExtResource("18_2q0lt")
 
 [node name="monster_red" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "monster_red"
@@ -289,6 +301,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 autowrap_mode = 2
 
 [node name="BubbleDialogue2" type="PanelContainer" parent="UI/HUD"]
+visible = false
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -300,6 +313,33 @@ layout_mode = 2
 [node name="BubbleText" type="Label" parent="UI/HUD/BubbleDialogue2/MarginContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+
+[node name="TavernBubble1" type="PanelContainer" parent="UI/HUD"]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_2q0lt")
+script = ExtResource("25_h85v6")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/TavernBubble1"]
+layout_mode = 2
+
+[node name="BubbleText" type="Label" parent="UI/HUD/TavernBubble1/MarginContainer"]
+layout_mode = 2
+
+[node name="TavernBubble2" type="PanelContainer" parent="UI/HUD"]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5l8tp")
+script = ExtResource("25_h85v6")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/TavernBubble2"]
+layout_mode = 2
+
+[node name="BubbleText" type="Label" parent="UI/HUD/TavernBubble2/MarginContainer"]
+layout_mode = 2
 
 [node name="HoleLayer" type="CanvasLayer" parent="UI"]
 layer = 100

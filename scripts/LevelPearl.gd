@@ -21,8 +21,11 @@ const ORDER_RULES = [
 @onready var layer_panel = $UI/HUD/LayerPanel
 @onready var bubble_dialogue = $UI/HUD/BubbleDialogue
 @onready var bubble_dialogue2 = $UI/HUD/BubbleDialogue2
-var icecream_puzzle_done: bool = false
+@onready var tavern_bubble1 = $UI/HUD/TavernBubble1
+@onready var tavern_bubble2 = $UI/HUD/TavernBubble2
 
+
+var icecream_puzzle_done: bool = false
 var watermelon_broken: bool = false
 var family_bubble_shown: bool = false
 var brush_unlocked: bool = false
@@ -74,6 +77,7 @@ func _connect_signals() -> void:
 	EventBus.layer_reordered.connect(_check_ink_puzzle)
 	EventBus.layer_reordered.connect(_check_mermaid_bubble)
 	EventBus.layer_visibility_changed.connect(_on_visibility_changed_mermaid)
+	EventBus.layer_copy_requested.connect(_on_pearl_copy)
 
 
 func _shuffle_layers() -> void:
@@ -106,6 +110,7 @@ func _shuffle_layers() -> void:
 	LayerManager.set_visible("fam_buy_ice", false)
 	LayerManager.set_visible("lanternfish_move", false)
 	LayerManager.set_visible("ink", false)
+	LayerManager.set_visible("pearl", false)
 
 
 func _on_layer_reordered() -> void:
@@ -531,3 +536,82 @@ func _check_family_done() -> void:
 	layer_panel.show_layer_in_panel("tavern")
 	# tavern 放到最上层
 	LayerManager.reorder_layer(_find_layer("tavern"), LayerManager.layers.size() - 1)
+	# 2秒后引导回来
+	await get_tree().create_timer(2.0).timeout
+	LayerManager.set_visible("pearl", true)
+	layer_panel.show_layer_in_panel("pearl")
+	_guide_returns_final()
+	
+	
+	
+	
+func _guide_returns_final() -> void:
+	var all_holes_filled = (
+		not $UI/HoleLayer/HoleRed.visible and
+		not $UI/HoleLayer/HoleBlue.visible and
+		not $UI/HoleLayer/HoleGreen.visible and
+		not $UI/HoleLayer/HoleWhite.visible
+	)
+	if all_holes_filled:
+		dialogue_box.show_dialogue([
+			"很好！你已经把画面修复了！它们会很感谢你的！",
+			"现在图层栏中的某些图层右侧多了复制按钮，您现在只能复制这种带按钮的特定图层。",
+			"不然复制太多不重要的图层又不能删除的话这个世界就乱套啦！快试试吧。",
+		], _unlock_copy_button)
+	else:
+		dialogue_box.show_dialogue([
+			"看来你已经修好大部分了，做得不错！",
+			"现在图层栏中的某些图层右侧多了复制按钮，您现在只能复制这种带按钮的特定图层。",
+			"不然复制太多不重要的图层又不能删除的话这个世界就乱套啦！快试试吧。",
+		], _unlock_copy_button)
+
+
+func _unlock_copy_button() -> void:
+	layer_panel.add_copy_button_to("pearl")
+	_start_tavern_dialogue()
+
+
+func _start_tavern_dialogue() -> void:
+	await get_tree().create_timer(0.5).timeout
+	tavern_bubble1.show_bubble("我和你说，前几天我在海边散步，突然踩到了什么东西，我低头一看，你猜我发现了什么？", Vector2(200, 400))
+	await get_tree().create_timer(4.0).timeout
+	tavern_bubble2.show_bubble("什么？", Vector2(600, 400))
+	await get_tree().create_timer(2.0).timeout
+	tavern_bubble1.show_bubble("一串闪闪发光的珍珠项链！看起来价格不菲呢。", Vector2(200, 400))
+	tavern_bubble2.hide_bubble()
+	await get_tree().create_timer(3.0).timeout
+	tavern_bubble2.show_bubble("那你不打算还给失主？人家肯定急坏了。", Vector2(600, 400))
+	await get_tree().create_timer(3.0).timeout
+	tavern_bubble1.show_bubble("谁捡到就算谁的，谁叫他不小心呢。", Vector2(200, 400))
+	tavern_bubble2.hide_bubble()
+	await get_tree().create_timer(3.0).timeout
+	tavern_bubble2.show_bubble("以后叫你拾金昧。说不定你捡到的是假珍珠呢，别高兴的太早。", Vector2(600, 400))
+	await get_tree().create_timer(3.0).timeout
+	tavern_bubble1.show_bubble("哼，不信我给你看，不，不给你看，这么重要的东西我可得藏好了。", Vector2(200, 400))
+	tavern_bubble2.hide_bubble()
+	await get_tree().create_timer(4.0).timeout
+	tavern_bubble2.show_bubble("不看就不看，小气鬼。", Vector2(600, 400))
+	tavern_bubble1.hide_bubble()
+	await get_tree().create_timer(2.0).timeout
+	tavern_bubble2.hide_bubble()
+	
+	
+	
+	
+func _on_pearl_copy(layer_id: String) -> void:
+	if layer_id != "pearl":
+		return
+	# 复制 pearl 图层
+	var copy = LayerManager.copy_layer("pearl", "pearl_copy")
+	if not copy:
+		return
+	# 原件移动到 sea_layer6 上方
+	var sea6_index = _get_layer_index("sea_layer6")
+	var original = _find_layer("pearl")
+	if original:
+		LayerManager.reorder_layer(original, sea6_index + 1)
+	# 更新面板
+	layer_panel.show_layer_in_panel("pearl_copy")
+	# 关卡完成
+	await get_tree().create_timer(1.0).timeout
+	_on_level_complete()

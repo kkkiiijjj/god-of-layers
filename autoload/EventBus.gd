@@ -18,3 +18,5 @@ signal item_dropped(item: Node, to_layer_id: String)
 # 对话信号
 signal dialogue_started(npc_id: String)
 signal dialogue_ended
+
+signal layer_copy_requested(layer_id: String)
