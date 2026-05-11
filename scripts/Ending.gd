@@ -72,7 +72,7 @@ func _show_image(index: int) -> void:
 	# 淡入新图
 	ending_image.modulate.a = 0.0
 	var tween2 = create_tween()
-	tween2.tween_property(ending_image, "modulate:a", 0.8, 0.8)
+	tween2.tween_property(ending_image, "modulate:a", 1.0, 0.8)
 	await tween2.finished
 
 #

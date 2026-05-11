@@ -269,6 +269,20 @@ func _rebuild_panel() -> void:
 	if drop_indicator == null:
 		_create_drop_indicator()
 	_update_eye_buttons_state()
+	# 重建后重新给 pearl 加复制按钮
+	if "pearl" in panel_visible_ids and layer_buttons.has("pearl"):
+		if not _has_copy_button("pearl"):
+			add_copy_button_to("pearl")
+
+
+func _has_copy_button(layer_id: String) -> bool:
+	if not layer_buttons.has(layer_id):
+		return false
+	var row = layer_buttons[layer_id]
+	for child in row.get_children():
+		if child is Button and child.text == "⧉":
+			return true
+	return false
 
 
 func show_layer_in_panel(layer_id: String) -> void:

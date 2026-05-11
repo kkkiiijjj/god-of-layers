@@ -258,6 +258,7 @@ func _clear_all_bugs() -> void:
 
 
 func _on_puzzle_stage_changed(stage: int) -> void:
+	print("阶段变化：", stage)
 	match stage:
 		1:
 			_show_holes()
@@ -273,10 +274,13 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 			LayerManager.set_visible("watermelon", true)
 			layer_panel.show_layer_in_panel("stone")
 			layer_panel.show_layer_in_panel("watermelon")
-			var sea_bg4_idx = _get_layer_index("sea_bg4")
+			var sea_layer5_idx = _get_layer_index("sea_layer5")
 			var stone_layer = _find_layer("stone")
+			print("sea_layer5 index: ", sea_layer5_idx)
+			print("stone_layer: ", stone_layer)
 			if stone_layer:
-				LayerManager.reorder_layer(stone_layer, sea_bg4_idx - 1)
+				LayerManager.reorder_layer(stone_layer, sea_layer5_idx + 1)
+				print("stone 新位置: ", _get_layer_index("stone"))
 			LayerManager.set_visible("history", true)
 			layer_panel.show_layer_in_panel("history")
 			# history 放到 icecream 下层
@@ -392,11 +396,15 @@ func _check_watermelon_puzzle() -> void:
 func _trigger_watermelon_break() -> void:
 	bubble_dialogue.hide_bubble()
 	LayerManager.set_visible("watermelon", false)
+	if layer_panel.layer_buttons.has("watermelon"):
+		layer_panel.layer_buttons["watermelon"].visible = false
+	layer_panel.cleared_ids.append("watermelon")
 	LayerManager.set_visible("watermelon_open", true)
 	layer_panel.show_layer_in_panel("watermelon_open")
 	LayerManager.set_visible("stone", false)
 	if layer_panel.layer_buttons.has("stone"):
 		layer_panel.layer_buttons["stone"].visible = false
+	layer_panel.cleared_ids.append("stone")
 	$UI/HoleLayer/HoleRed.visible = false
 	GameState.collect_paint("red")
 	print("红色漏洞已填补！")
