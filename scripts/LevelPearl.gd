@@ -296,7 +296,9 @@ func _on_puzzle_stage_changed(stage: int) -> void:
 
 func _on_level_complete() -> void:
 	GameState.complete_level()
-	print("=== 关卡完成！===")
+	await get_tree().create_timer(1.0).timeout
+	var ending = preload("res://scenes/Ending.tscn").instantiate()
+	get_tree().root.add_child(ending)
 
 
 func _reveal_monsters_in_panel() -> void:

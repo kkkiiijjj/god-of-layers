@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dhsthp3o7lo5s"
-path="res://.godot/imported/sea_layer6.png-556862138865325d51febffc2c69f142.ctex"
+uid="uid://b0fdja1dqs5ky"
+path="res://.godot/imported/ending_3.png-d49ba9ee5442ab5bdca042b8f9e85d1c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/sea_layer6.png"
-dest_files=["res://.godot/imported/sea_layer6.png-556862138865325d51febffc2c69f142.ctex"]
+source_file="res://assets/sprites/ending_3.png"
+dest_files=["res://.godot/imported/ending_3.png-d49ba9ee5442ab5bdca042b8f9e85d1c.ctex"]
 
 [params]
 
