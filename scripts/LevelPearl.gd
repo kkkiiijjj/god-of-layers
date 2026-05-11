@@ -490,10 +490,11 @@ func _trigger_ink_puzzle() -> void:
 	# lanternfish 替换为 lanternfish_move
 	var lanternfish_index = _get_layer_index("lanternfish")
 	LayerManager.set_visible("lanternfish", false)
-	LayerManager.set_visible("lanternfish_move", true)
-	layer_panel.show_layer_in_panel("lanternfish_move")
 	if layer_panel.layer_buttons.has("lanternfish"):
 		layer_panel.layer_buttons["lanternfish"].visible = false
+	layer_panel.cleared_ids.append("lanternfish")
+	LayerManager.set_visible("lanternfish_move", true)
+	layer_panel.show_layer_in_panel("lanternfish_move")
 	var lf_move = _find_layer("lanternfish_move")
 	if lf_move:
 		LayerManager.reorder_layer(lf_move, lanternfish_index)
@@ -501,10 +502,11 @@ func _trigger_ink_puzzle() -> void:
 	# sea_layer5 替换为 ink
 	var sea5_index = _get_layer_index("sea_layer5")
 	LayerManager.set_visible("sea_layer5", false)
-	LayerManager.set_visible("ink", true)
-	layer_panel.show_layer_in_panel("ink")
 	if layer_panel.layer_buttons.has("sea_layer5"):
 		layer_panel.layer_buttons["sea_layer5"].visible = false
+	layer_panel.cleared_ids.append("sea_layer5")
+	LayerManager.set_visible("ink", true)
+	layer_panel.show_layer_in_panel("ink")
 	var ink_layer = _find_layer("ink")
 	if ink_layer:
 		LayerManager.reorder_layer(ink_layer, sea5_index)
@@ -514,14 +516,15 @@ func _trigger_ink_puzzle() -> void:
 	LayerManager.set_visible("ink", false)
 	if layer_panel.layer_buttons.has("ink"):
 		layer_panel.layer_buttons["ink"].visible = false
+	layer_panel.cleared_ids.append("ink")
 	LayerManager.set_visible("sea_layer5", true)
+	layer_panel.cleared_ids.erase("sea_layer5")
 	layer_panel.show_layer_in_panel("sea_layer5")
 
 	# 填补蓝色漏洞
 	$UI/HoleLayer/HoleBlue.visible = false
 	GameState.collect_paint("blue")
 	print("蓝色漏洞已填补！")
-	
 	
 func _on_visibility_changed_mermaid(_layer_id: String, _visible: bool) -> void:
 	_check_mermaid_bubble()
