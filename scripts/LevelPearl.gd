@@ -33,6 +33,7 @@ var ink_puzzle_done: bool = false
 var mermaid_bubble_shown: bool = false
 var family_done: bool = false
 var eraser_wrong_clicks: int = 0
+var ending_triggered: bool = false
 
 func _ready() -> void:
 	GameState.start_level("pearl")
@@ -52,6 +53,11 @@ func _ready() -> void:
 	for i in LayerManager.layers.size():
 		var l = LayerManager.layers[i]
 		print("  [", i, "] ", l.get_meta("layer_id", "无ID"))
+	
+	# 把初始可见图层都加进 panel_visible_ids
+	var initial_visible = ["sky", "sun", "sunset", "sea_front", "beach", "rock", "coconut_tree", "family", "icecream", "seagull"]
+	for lid in initial_visible:
+		layer_panel.panel_visible_ids.append(lid)
 	
 	_trigger_stage_one_start()
 
@@ -322,6 +328,7 @@ func _show_holes() -> void:
 
 
 func _reveal_sea_layers() -> void:
+	layer_panel.panel_visible_ids.erase("sea_back")
 	var sea_back_index = _get_layer_index("sea_back")
 	LayerManager.set_visible("sea_back", false)
 	var new_layers = ["sea_layer6", "sea_layer5", "sea_bg4", "lanternfish"]
@@ -626,21 +633,34 @@ func _start_tavern_dialogue() -> void:
 func _on_pearl_copy(layer_id: String) -> void:
 	if layer_id != "pearl":
 		return
-	# 复制 pearl 图层，副本留在原处
 	var copy = LayerManager.copy_layer("pearl", "pearl_copy")
 	if not copy:
 		return
-	# 原件移动到 sea_layer6 上方
-	var sea6_index = _get_layer_index("sea_layer6")
-	var original = _find_layer("pearl")
-	if original:
-		LayerManager.reorder_layer(original, sea6_index + 1)
-		original.visible = true
-	# 更新面板
 	layer_panel.show_layer_in_panel("pearl_copy")
-	# 美人鱼台词
+	# 开始监听 pearl 是否被移到 sea_layer6 上方
+	EventBus.layer_reordered.connect(_check_pearl_position)
+	
+	
+	
+func _check_pearl_position() -> void:
+	if ending_triggered:
+		return
+	var pearl_index = _get_layer_index("pearl")
+	var sea6_index = _get_layer_index("sea_layer6")
+	if pearl_index == -1 or sea6_index == -1:
+		return
+	if pearl_index == sea6_index + 1:
+		EventBus.layer_reordered.disconnect(_check_pearl_position)
+		_trigger_ending()
+
+
+func _trigger_ending() -> void:
+	# 隐藏 pearl 上方所有图层
+	var pearl_index = _get_layer_index("pearl")
+	for i in range(pearl_index + 1, LayerManager.layers.size()):
+		LayerManager.set_visible(LayerManager.layers[i].get_meta("layer_id", ""), false)
+	# 美人鱼气泡
 	await get_tree().create_timer(1.0).timeout
-	bubble_dialogue.show_bubble("？？！我眼花了吗？它怎么就在我眼前？", Vector2(700, 400), 4.0)
+	bubble_dialogue.show_bubble("？？！我眼花了吗？它怎么就在我眼前？", Vector2(400, 400), 4.0)
 	await get_tree().create_timer(4.5).timeout
-	# 关卡完成
 	_on_level_complete()

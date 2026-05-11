@@ -12,6 +12,7 @@ var panel_visible_ids: Array[String] = []
 var collapsed: bool = false
 var collapse_btn: Button = null
 var cleared_ids: Array[String] = []
+var is_rebuilding: bool = false
 
 
 @onready var eraser_btn: Button = get_parent().get_node("EraserBtn")
@@ -90,7 +91,6 @@ func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 	var row = HBoxContainer.new()
 	row.set_meta("layer_id", layer_id)
 	row.custom_minimum_size = Vector2(180, 40)
-
 	var handle = Label.new()
 	handle.text = "⠿"
 	handle.custom_minimum_size = Vector2(24, 0)
@@ -100,12 +100,16 @@ func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 	handle.gui_input.connect(func(event):
 		_on_handle_input(event, layer_id)
 	)
-
 	var eye_btn = Button.new()
 	eye_btn.text = "👁"
 	eye_btn.toggle_mode = true
-	eye_btn.button_pressed = true
 	eye_btn.custom_minimum_size = Vector2(32, 0)
+	# 同步实际图层状态
+	var actual_layer = _find_layer_by_id(layer_id)
+	var is_visible = actual_layer.visible if actual_layer else true
+	eye_btn.set_pressed_no_signal(is_visible)
+	eye_btn.text = "👁" if is_visible else "🙈"
+	eye_btn.modulate = Color.WHITE if is_visible else Color(1, 1, 1, 0.4)
 	eye_btn.toggled.connect(func(pressed: bool):
 		if GameState.current_stage == 0:
 			eye_btn.set_pressed_no_signal(true)
@@ -114,14 +118,12 @@ func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 		eye_btn.text = "👁" if pressed else "🙈"
 		eye_btn.modulate = Color.WHITE if pressed else Color(1, 1, 1, 0.4)
 	)
-
 	var label = Button.new()
 	label.text = layer_id
 	label.flat = true
 	label.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
-
 	row.add_child(handle)
 	row.add_child(eye_btn)
 	row.add_child(label)
@@ -265,14 +267,17 @@ func _find_layer_by_id(layer_id: String) -> Node:
 
 
 func _rebuild_panel() -> void:
+	if is_rebuilding:
+		return
+	is_rebuilding = true
 	_build_panel()
 	if drop_indicator == null:
 		_create_drop_indicator()
 	_update_eye_buttons_state()
-	# 重建后重新给 pearl 加复制按钮
 	if "pearl" in panel_visible_ids and layer_buttons.has("pearl"):
 		if not _has_copy_button("pearl"):
 			add_copy_button_to("pearl")
+	is_rebuilding = false
 
 
 func _has_copy_button(layer_id: String) -> bool:
