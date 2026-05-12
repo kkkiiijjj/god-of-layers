@@ -62,13 +62,7 @@ func _show_image(index: int) -> void:
 	# 切换图片
 	ending_image.texture = ending_textures[index]
 	ending_image.visible = true
-	# 第四张全屏缩放
-	if index == 3:
-		var scale_x = 1280.0 / 2596.0
-		var scale_y = 720.0 / 1148.0
-		ending_image.scale = Vector2(scale_x, scale_y)
-	else:
-		ending_image.scale = Vector2(1, 1)
+	ending_image.scale = Vector2(1, 1)
 	# 淡入新图
 	ending_image.modulate.a = 0.0
 	var tween2 = create_tween()
