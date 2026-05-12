@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="God of layers"
-run/main_scene="uid://cp1bu1dk62455"
+run/main_scene="uid://bgapager1tgal"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 

@@ -1,7 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://xfcnme7k5ol"]
+[gd_scene load_steps=5 format=3 uid="uid://xfcnme7k5ol"]
 
 [ext_resource type="Script" uid="uid://c6hi7tjh30ry" path="res://scripts/Ending.gd" id="1_tpy27"]
 [ext_resource type="Script" uid="uid://bd35x2chcmvvk" path="res://scripts/BubbleDialogue.gd" id="2_4xsa7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xsa7"]
+bg_color = Color(0.360784, 0.537255, 0.756863, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fnpsr"]
+bg_color = Color(0.698039, 0.6, 0.8, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="Ending" type="CanvasLayer"]
 script = ExtResource("1_tpy27")
@@ -14,24 +28,26 @@ color = Color(0, 0, 0, 1)
 [node name="EndingImage" type="Sprite2D" parent="."]
 position = Vector2(640, 360)
 
-[node name="EndingBubble1" type="PanelContainer" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("2_4xsa7")
-
-[node name="MarginContainer" type="MarginContainer" parent="EndingBubble1"]
-layout_mode = 2
-
-[node name="BubbleText" type="Label" parent="EndingBubble1/MarginContainer"]
-layout_mode = 2
-
 [node name="EndingBubble2" type="PanelContainer" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_4xsa7")
 script = ExtResource("2_4xsa7")
 
 [node name="MarginContainer" type="MarginContainer" parent="EndingBubble2"]
 layout_mode = 2
 
 [node name="BubbleText" type="Label" parent="EndingBubble2/MarginContainer"]
+layout_mode = 2
+
+[node name="EndingBubble1" type="PanelContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_fnpsr")
+script = ExtResource("2_4xsa7")
+
+[node name="MarginContainer" type="MarginContainer" parent="EndingBubble1"]
+layout_mode = 2
+
+[node name="BubbleText" type="Label" parent="EndingBubble1/MarginContainer"]
 layout_mode = 2

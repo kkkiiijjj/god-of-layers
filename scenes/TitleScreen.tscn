@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://bgapager1tgal"]
+
+[ext_resource type="Script" uid="uid://dd0aqwmibhg6f" path="res://scripts/TitleScreen.gd" id="1_ch40n"]
+[ext_resource type="Texture2D" uid="uid://bfv6glxns4f17" path="res://assets/sprites/title_screen.png" id="1_qyuap"]
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_ch40n")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TitleImage" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_qyuap")
+stretch_mode = 5

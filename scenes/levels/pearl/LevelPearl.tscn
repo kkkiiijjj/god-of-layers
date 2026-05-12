@@ -5,9 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://bo47vj2ho1xpq" path="res://assets/sprites/sky.png" id="3_n6kh4"]
 [ext_resource type="Script" uid="uid://icsx7l8h37af" path="res://scripts/LayerPanel.gd" id="3_xitwa"]
 [ext_resource type="Texture2D" uid="uid://djno1q8xv06mm" path="res://assets/sprites/sea_back.png" id="4_3ks7r"]
-[ext_resource type="Texture2D" uid="uid://bu7rq1dyslmx3" path="res://assets/sprites/beach.png" id="5_5seri"]
+[ext_resource type="Texture2D" uid="uid://cjk3a0smv3rcc" path="res://assets/sprites/beach.png" id="5_5seri"]
 [ext_resource type="Texture2D" uid="uid://c3qjepjhglyyh" path="res://assets/sprites/sun.png" id="6_lu0gh"]
-[ext_resource type="Texture2D" uid="uid://cn7k67y1t3woc" path="res://assets/sprites/sunset.png" id="7_syk0w"]
+[ext_resource type="Texture2D" uid="uid://c7icd5wq8rkuh" path="res://assets/sprites/sunset.png" id="7_syk0w"]
 [ext_resource type="Texture2D" uid="uid://o1aiybi3mfm1" path="res://assets/sprites/sea_front.png" id="8_mkle6"]
 [ext_resource type="Texture2D" uid="uid://c22x4mfv5d75l" path="res://assets/sprites/seagull.png" id="9_h3i0y"]
 [ext_resource type="Texture2D" uid="uid://c4jkkmt38me8a" path="res://assets/sprites/rock.png" id="10_d6rmn"]
@@ -42,9 +42,17 @@ corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2q0lt"]
 bg_color = Color(0.962554, 0.455756, 0.354254, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5l8tp"]
 bg_color = Color(0.284405, 0.584916, 0.369379, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="LevelPearl" type="Node2D"]
 script = ExtResource("1_vx3aj")
@@ -136,27 +144,27 @@ texture = ExtResource("18_2q0lt")
 layer_id = "monster_red"
 layer_name = "红色怪物"
 placeholder_color = Color(1, 0, 0, 1)
-sprite_position = Vector2(600, 230)
+sprite_position = Vector2(595, 230)
 texture = ExtResource("13_5seri")
 
 [node name="monster_white" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "monster_white"
 layer_name = "白色怪物"
-sprite_position = Vector2(660, 510)
+sprite_position = Vector2(655, 510)
 texture = ExtResource("13_5seri")
 
 [node name="monster_green" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "monster_green"
 layer_name = "绿色怪物"
 placeholder_color = Color(0, 1, 0, 1)
-sprite_position = Vector2(205, 240)
+sprite_position = Vector2(200, 240)
 texture = ExtResource("13_5seri")
 
 [node name="monster_blue" parent="Layers" instance=ExtResource("2_ow1dc")]
 layer_id = "monster_blue"
 layer_name = "蓝色怪物"
 placeholder_color = Color(0, 0, 1, 1)
-sprite_position = Vector2(840, 340)
+sprite_position = Vector2(835, 340)
 texture = ExtResource("13_5seri")
 
 [node name="sea_bg4" parent="Layers" instance=ExtResource("2_ow1dc")]
