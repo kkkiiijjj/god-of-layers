@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://cp1bu1dk62455"]
+[gd_scene load_steps=38 format=3 uid="uid://cp1bu1dk62455"]
 
 [ext_resource type="Script" uid="uid://cn24d1imrudi" path="res://scripts/LevelPearl.gd" id="1_vx3aj"]
 [ext_resource type="PackedScene" uid="uid://mlyl53c5bl0j" path="res://scenes/WorldLayer.tscn" id="2_ow1dc"]
@@ -32,6 +32,8 @@
 [ext_resource type="Texture2D" uid="uid://ctx6n7ja4qec8" path="res://assets/sprites/lanternfish_move.png" id="24_s1p6i"]
 [ext_resource type="Script" uid="uid://bd35x2chcmvvk" path="res://scripts/BubbleDialogue.gd" id="25_h85v6"]
 [ext_resource type="Texture2D" uid="uid://djooxh4p8k5jw" path="res://assets/sprites/ink.png" id="25_p5i8u"]
+[ext_resource type="AudioStream" uid="uid://clgfgy6l3hug8" path="res://assets/audio/bgm.mp3" id="33_5l8tp"]
+[ext_resource type="AudioStream" uid="uid://doqxyy0akenoi" path="res://assets/audio/sfx_complete.ogg" id="34_a2nuf"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cyr16"]
 bg_color = Color(1, 1, 1, 1)
@@ -376,3 +378,9 @@ visible = false
 position = Vector2(225, 240)
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("16_lu0gh")
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("33_5l8tp")
+
+[node name="SFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("34_a2nuf")

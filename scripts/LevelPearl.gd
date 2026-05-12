@@ -23,6 +23,7 @@ const ORDER_RULES = [
 @onready var bubble_dialogue2 = $UI/HUD/BubbleDialogue2
 @onready var tavern_bubble1 = $UI/HUD/TavernBubble1
 @onready var tavern_bubble2 = $UI/HUD/TavernBubble2
+@onready var sfx = $SFX
 
 
 var icecream_puzzle_done: bool = false
@@ -36,6 +37,8 @@ var eraser_wrong_clicks: int = 0
 var ending_triggered: bool = false
 
 func _ready() -> void:
+	$BGM.stream.loop = true
+	$BGM.play()
 	GameState.start_level("pearl")
 	_setup_camera()
 	_connect_signals()
@@ -235,9 +238,9 @@ func _unlock_brush() -> void:
 
 
 func _fill_white_hole() -> void:
+	sfx.play()
 	$UI/HoleLayer/HoleWhite.visible = false
 	GameState.collect_paint("white")
-	print("白色漏洞已填补！")
 
 
 func _on_eraser_activated() -> void:
@@ -413,6 +416,7 @@ func _trigger_watermelon_break() -> void:
 		layer_panel.layer_buttons["stone"].visible = false
 	layer_panel.cleared_ids.append("stone")
 	$UI/HoleLayer/HoleRed.visible = false
+	sfx.play()
 	GameState.collect_paint("red")
 	print("红色漏洞已填补！")
 	_show_watermelon_done_bubble()
@@ -466,6 +470,7 @@ func _trigger_icecream_puzzle() -> void:
 		layer_panel.layer_buttons["family"].visible = false
 	# 填补绿色漏洞
 	$UI/HoleLayer/HoleGreen.visible = false
+	sfx.play()
 	GameState.collect_paint("green")
 	print("绿色漏洞已填补！")
 	_check_family_done()
@@ -523,8 +528,8 @@ func _trigger_ink_puzzle() -> void:
 
 	# 填补蓝色漏洞
 	$UI/HoleLayer/HoleBlue.visible = false
+	sfx.play()
 	GameState.collect_paint("blue")
-	print("蓝色漏洞已填补！")
 	
 func _on_visibility_changed_mermaid(_layer_id: String, _visible: bool) -> void:
 	_check_mermaid_bubble()
