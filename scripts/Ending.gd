@@ -93,7 +93,7 @@ func _start_credits() -> void:
 	
 	# 滚动到屏幕上方
 	var tween = create_tween()
-	tween.tween_property(credits_label, "position:y", -credits_label.size.y, 8.0).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_property(credits_label, "position:y", -credits_label.size.y, 20.0).set_trans(Tween.TRANS_LINEAR)
 	await tween.finished
 	
 	# 结束，回到开始界面

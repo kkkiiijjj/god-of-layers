@@ -34,7 +34,6 @@ func _ready() -> void:
 	eraser_btn.pressed.connect(_toggle_eraser_mode)
 
 
-
 func _toggle_eraser_mode() -> void:
 	eraser_mode = !eraser_mode
 	if eraser_btn:
@@ -72,7 +71,6 @@ func _build_panel() -> void:
 			child.queue_free()
 	layer_buttons.clear()
 
-
 	var layers_reversed = LayerManager.layers.duplicate()
 	layers_reversed.reverse()
 
@@ -83,47 +81,47 @@ func _build_panel() -> void:
 		row.visible = (layer.visible or layer_id in panel_visible_ids) and layer_id not in cleared_ids
 
 
-
-
-
-
 func _create_layer_row(layer: Node, layer_id: String) -> HBoxContainer:
 	var row = HBoxContainer.new()
 	row.set_meta("layer_id", layer_id)
 	row.custom_minimum_size = Vector2(180, 40)
-	var handle = Label.new()
-	handle.text = "⠿"
-	handle.custom_minimum_size = Vector2(24, 0)
-	handle.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+	# 拖动把手
+	var handle = TextureRect.new()
+	handle.texture = preload("res://assets/sprites/icon_drag.png")
+	handle.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	handle.custom_minimum_size = Vector2(24, 24)
 	handle.mouse_default_cursor_shape = Control.CURSOR_DRAG
 	handle.mouse_filter = Control.MOUSE_FILTER_STOP
 	handle.gui_input.connect(func(event):
 		_on_handle_input(event, layer_id)
 	)
+
+	# 眼睛按钮
 	var eye_btn = Button.new()
-	eye_btn.text = "👁"
 	eye_btn.toggle_mode = true
 	eye_btn.custom_minimum_size = Vector2(32, 0)
-	# 同步实际图层状态
 	var actual_layer = _find_layer_by_id(layer_id)
 	var is_visible = actual_layer.visible if actual_layer else true
 	eye_btn.set_pressed_no_signal(is_visible)
-	eye_btn.text = "👁" if is_visible else "🙈"
+	eye_btn.icon = preload("res://assets/sprites/icon_eye_open.png") if is_visible else preload("res://assets/sprites/icon_eye_closed.png")
 	eye_btn.modulate = Color.WHITE if is_visible else Color(1, 1, 1, 0.4)
 	eye_btn.toggled.connect(func(pressed: bool):
 		if GameState.current_stage == 0:
 			eye_btn.set_pressed_no_signal(true)
 			return
 		LayerManager.set_visible(layer_id, pressed)
-		eye_btn.text = "👁" if pressed else "🙈"
+		eye_btn.icon = preload("res://assets/sprites/icon_eye_open.png") if pressed else preload("res://assets/sprites/icon_eye_closed.png")
 		eye_btn.modulate = Color.WHITE if pressed else Color(1, 1, 1, 0.4)
 	)
+
+	# 图层名称
 	var label = Button.new()
 	label.text = layer_id
 	label.flat = true
 	label.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
+
 	row.add_child(handle)
 	row.add_child(eye_btn)
 	row.add_child(label)
@@ -156,7 +154,7 @@ func _update_drop_indicator() -> void:
 	var mouse_pos = vbox.get_local_mouse_position()
 	var rows = []
 	for child in vbox.get_children():
-		if child.name != "Title" and child != drop_indicator and child.name != "OpacityRow" and child.name != "Separator" and child.name != "EraserBtn" and child.name != "EraserBlock":
+		if child.name != "Title" and child != drop_indicator and child.name != "EraserBtn" and child.name != "EraserBlock":
 			rows.append(child)
 
 	insert_index = rows.size()
@@ -285,7 +283,7 @@ func _has_copy_button(layer_id: String) -> bool:
 		return false
 	var row = layer_buttons[layer_id]
 	for child in row.get_children():
-		if child is Button and child.text == "⧉":
+		if child is Button and child.icon == preload("res://assets/sprites/icon_copy.png"):
 			return true
 	return false
 
@@ -302,7 +300,7 @@ func add_copy_button_to(layer_id: String) -> void:
 		return
 	var row = layer_buttons[layer_id]
 	var copy_btn = Button.new()
-	copy_btn.text = "⧉"
+	copy_btn.icon = preload("res://assets/sprites/icon_copy.png")
 	copy_btn.custom_minimum_size = Vector2(32, 0)
 	copy_btn.pressed.connect(func():
 		_on_copy_pressed(layer_id, copy_btn)
@@ -311,6 +309,5 @@ func add_copy_button_to(layer_id: String) -> void:
 
 
 func _on_copy_pressed(layer_id: String, btn: Button) -> void:
-	# 只能用一次
 	btn.disabled = true
 	EventBus.layer_copy_requested.emit(layer_id)
